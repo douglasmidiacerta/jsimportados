@@ -1,0 +1,17 @@
+{
+  "name": "JS Importados",
+  "short_name": "JS Importados",
+  "description": "Controle de compra, venda, estoque e caixa.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b1211",
+  "theme_color": "#0c6e6b",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
