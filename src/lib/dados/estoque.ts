@@ -10,7 +10,7 @@ export async function listarEstoqueBalcao(
   const supabase = await criarClienteServidor();
   let query = supabase
     .from("produtos")
-    .select("id, nome, unidade, foto_path, estoque_atual, categorias(nome)")
+    .select("id, nome, unidade, foto_path, estoque_atual, categorias!categoria_id(nome)")
     .eq("ativo", true)
     .order("nome");
   if (busca && busca.trim()) query = query.ilike("nome", `%${busca.trim()}%`);
@@ -41,7 +41,7 @@ export async function listarEstoqueGestao(
   let query = supabase
     .from("produtos")
     .select(
-      "id, nome, unidade, estoque_atual, categorias(nome), produtos_custo(custo)",
+      "id, nome, unidade, estoque_atual, categorias!categoria_id(nome), produtos_custo(custo)",
     )
     .eq("ativo", true)
     .order("nome");

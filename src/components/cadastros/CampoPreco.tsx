@@ -9,11 +9,14 @@ export function CampoPreco({
   name,
   defaultValue,
   dica,
+  onValor,
 }: {
   label: string;
   name: string;
   defaultValue?: string;
   dica?: string;
+  /** Notifica o valor parseado a cada digitação (para margens ao vivo). */
+  onValor?: (valor: number) => void;
 }) {
   const [texto, setTexto] = useState(defaultValue ?? "");
   const valor = parseMoedaBR(texto);
@@ -31,7 +34,10 @@ export function CampoPreco({
           type="text"
           inputMode="decimal"
           value={texto}
-          onChange={(e) => setTexto(e.target.value)}
+          onChange={(e) => {
+            setTexto(e.target.value);
+            onValor?.(parseMoedaBR(e.target.value));
+          }}
           placeholder="0,00"
           className="w-full min-h-[52px] rounded-xl border border-line bg-surface-2 pl-10 pr-4 text-base text-ink placeholder:text-muted outline-none focus:border-accent focus:bg-surface transition-colors"
         />

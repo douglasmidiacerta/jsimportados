@@ -9,7 +9,7 @@ import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
 import { FormularioProduto } from "@/components/cadastros/FormularioProduto";
 import { CampoPrecoLista } from "@/components/precos/CampoPrecoLista";
 import { AvisoErro, mensagemAtivo } from "@/components/cadastros/AvisoErro";
-import { atualizarProduto, definirAtivoProduto } from "../actions";
+import { atualizarProduto, definirAtivoProduto, criarCategoriaAction } from "../actions";
 import { definirPrecoAction } from "../../listas-preco/actions";
 
 export default async function EditarProdutoPage({
@@ -42,13 +42,20 @@ export default async function EditarProdutoPage({
           voltarHref="/gestao/produtos"
         />
 
-        <AvisoErro mensagem={mensagemAtivo(erro)} />
+        <AvisoErro
+          mensagem={
+            erro === "fotos"
+              ? "O produto foi salvo, mas as fotos da galeria não. Ajuste as fotos e salve de novo."
+              : mensagemAtivo(erro)
+          }
+        />
 
         <FormularioProduto
           action={atualizarProduto}
           categorias={categorias}
           produto={produto}
           voltarHref="/gestao/produtos"
+          onCriarCategoria={criarCategoriaAction}
         />
 
         {outrasListas.length > 0 && (

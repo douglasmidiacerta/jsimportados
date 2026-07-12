@@ -4,24 +4,40 @@ export type Categoria = {
   id: string;
   nome: string;
   ativo: boolean;
+  parent_id: string | null; // Produto 2.0: null = categoria de topo; senão é subcategoria
 };
 
 export type Produto = {
   id: string;
   nome: string;
   categoria_id: string | null;
+  subcategoria_id: string | null; // Produto 2.0
   unidade: string;
-  preco_venda: number;
-  custo: number | null;
+  preco_venda: number; // Venda varejo
+  preco_atacado: number | null; // Produto 2.0: venda atacado (aplicação manual)
+  qtde_min_atacado: number | null; // Produto 2.0: referência p/ atacado
+  custo: number | null; // custo MÉDIO ponderado (só-gestão)
+  custo_ultima_compra: number | null; // Produto 2.0: custo da última compra (só-gestão)
   estoque_atual: number;
-  foto_path: string | null;
+  marca: string | null; // Produto 2.0
+  modelo: string | null; // Produto 2.0
+  foto_path: string | null; // foto de CAPA (usada no balcão/PDV)
   observacoes: string | null;
+  // Loja virtual (Produto 2.0)
+  loja_ativo: boolean;
+  destaque_home: boolean;
+  descricao: string | null;
+  garantia: string | null;
+  itens_inclusos: string | null;
+  especificacoes: string | null;
   ativo: boolean;
 };
 
-/** Produto com o nome da categoria embutido (para listagens). */
+/** Produto com nomes de categoria/subcategoria e galeria embutidos (listagens/edição). */
 export type ProdutoLista = Produto & {
   categoria_nome: string | null;
+  subcategoria_nome: string | null;
+  fotos: string[]; // galeria (paths ordenados) — Produto 2.0
 };
 
 export type Fornecedor = {

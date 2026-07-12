@@ -3,7 +3,7 @@ import { listarCategorias } from "@/lib/dados/categorias";
 import { BarraTopo } from "@/components/BarraTopo";
 import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
 import { FormularioProduto } from "@/components/cadastros/FormularioProduto";
-import { criarProduto } from "../actions";
+import { criarProduto, criarCategoriaAction } from "../actions";
 
 export default async function NovoProdutoPage() {
   const perfil = await exigirGestao();
@@ -18,6 +18,7 @@ export default async function NovoProdutoPage() {
           action={criarProduto}
           categorias={categorias}
           voltarHref="/gestao/produtos"
+          onCriarCategoria={criarCategoriaAction}
         />
       </main>
     </>
