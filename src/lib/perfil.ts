@@ -37,6 +37,16 @@ export async function exigirPerfil(): Promise<Perfil> {
   return perfil as Perfil;
 }
 
+/**
+ * Exige um usuário com papel de gestão. Redireciona operação para /balcao
+ * e visitantes sem sessão para /login. Usar no topo de páginas só-gestão.
+ */
+export async function exigirGestao(): Promise<Perfil> {
+  const perfil = await exigirPerfil();
+  if (perfil.papel !== "gestao") redirect("/balcao");
+  return perfil;
+}
+
 /** Caminho da tela inicial conforme o papel. */
 export function inicioPorPapel(papel: Papel): string {
   return papel === "gestao" ? "/gestao" : "/balcao";
