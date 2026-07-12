@@ -8,6 +8,7 @@ import {
   revogarConvite,
   definirPapelUsuario,
   definirAtivoUsuario,
+  definirCadastroAberto,
   type Papel,
 } from "@/lib/dados/usuarios";
 import type { EstadoForm } from "@/lib/dados/tipos";
@@ -60,6 +61,14 @@ export async function definirAtivoAction(fd: FormData): Promise<void> {
   const id = String(fd.get("id") ?? "");
   const ativo = String(fd.get("ativo") ?? "") === "true";
   const { error } = await definirAtivoUsuario(id, ativo);
+  revalidatePath("/gestao/usuarios");
+  redirect(error ? `/gestao/usuarios?erro=${encodeURIComponent(traduz(error))}` : "/gestao/usuarios");
+}
+
+export async function definirCadastroAbertoAction(fd: FormData): Promise<void> {
+  await exigirGestao();
+  const aberto = String(fd.get("aberto") ?? "") === "true";
+  const { error } = await definirCadastroAberto(aberto);
   revalidatePath("/gestao/usuarios");
   redirect(error ? `/gestao/usuarios?erro=${encodeURIComponent(traduz(error))}` : "/gestao/usuarios");
 }

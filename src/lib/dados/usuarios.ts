@@ -80,3 +80,22 @@ export async function definirAtivoUsuario(id: string, ativo: boolean) {
   });
   return { error };
 }
+
+/** Está o cadastro aberto (qualquer um com o link cria conta, como operação)? */
+export async function obterCadastroAberto(): Promise<boolean> {
+  const supabase = await criarClienteServidor();
+  const { data } = await supabase
+    .from("app_config")
+    .select("valor")
+    .eq("chave", "cadastro_aberto")
+    .maybeSingle();
+  return data?.valor === "true";
+}
+
+export async function definirCadastroAberto(aberto: boolean) {
+  const supabase = await criarClienteServidor();
+  const { error } = await supabase.rpc("definir_cadastro_aberto", {
+    p_aberto: aberto,
+  });
+  return { error };
+}

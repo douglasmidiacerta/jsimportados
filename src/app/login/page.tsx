@@ -133,7 +133,7 @@ function LoginConteudo() {
 
         <p className="text-center text-xs text-muted mt-5">
           {modo === "criar"
-            ? "Só quem foi convidado pelo gestor consegue criar uma conta."
+            ? "Crie sua conta para acessar o sistema. Se não conseguir, peça um convite ao gestor."
             : "Acesse com sua conta para continuar."}
         </p>
       </div>

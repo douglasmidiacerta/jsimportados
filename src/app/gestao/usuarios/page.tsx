@@ -1,5 +1,9 @@
 import { exigirGestao } from "@/lib/perfil";
-import { listarUsuarios, listarConvitesPendentes } from "@/lib/dados/usuarios";
+import {
+  listarUsuarios,
+  listarConvitesPendentes,
+  obterCadastroAberto,
+} from "@/lib/dados/usuarios";
 import { formatarData } from "@/lib/formato";
 import { BarraTopo } from "@/components/BarraTopo";
 import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
@@ -11,6 +15,7 @@ import {
   revogarConviteAction,
   definirPapelAction,
   definirAtivoAction,
+  definirCadastroAbertoAction,
 } from "./actions";
 
 export default async function UsuariosPage({
@@ -20,9 +25,10 @@ export default async function UsuariosPage({
 }) {
   const perfil = await exigirGestao();
   const { erro } = await searchParams;
-  const [usuarios, convites] = await Promise.all([
+  const [usuarios, convites, cadastroAberto] = await Promise.all([
     listarUsuarios(),
     listarConvitesPendentes(),
+    obterCadastroAberto(),
   ]);
 
   return (
@@ -35,6 +41,51 @@ export default async function UsuariosPage({
           voltarHref="/gestao"
         />
         <AvisoErro mensagem={erro} />
+
+        <section className="mb-6">
+          <div
+            className={`rounded-2xl border p-4 ${
+              cadastroAberto
+                ? "border-[color:var(--amber)]/40 bg-[color:var(--amber-soft)]"
+                : "border-line bg-surface"
+            }`}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h2 className="text-sm font-bold text-ink flex items-center gap-2">
+                  Cadastro aberto
+                  {cadastroAberto ? (
+                    <span className="text-[11px] font-mono uppercase tracking-wide text-amber">● ligado</span>
+                  ) : (
+                    <span className="text-[11px] font-mono uppercase tracking-wide text-muted">○ desligado</span>
+                  )}
+                </h2>
+                <p className="text-xs text-muted mt-1 leading-relaxed">
+                  {cadastroAberto
+                    ? "Qualquer pessoa com o link pode criar conta agora — sempre como operação (balcão). Desligue assim que quem precisava já tiver entrado."
+                    : "Só quem você convidar consegue criar conta. Ligue para deixar qualquer um com o link se cadastrar (entram como operação)."}
+                </p>
+              </div>
+              {cadastroAberto ? (
+                <BotaoConfirmar
+                  action={definirCadastroAbertoAction}
+                  hidden={{ aberto: "false" }}
+                  rotulo="Desligar"
+                  confirmar="Desligar o cadastro aberto? Volta a exigir convite para criar conta."
+                  className="h-9 px-3 shrink-0 rounded-lg bg-accent text-white text-sm font-semibold hover:opacity-90"
+                />
+              ) : (
+                <BotaoConfirmar
+                  action={definirCadastroAbertoAction}
+                  hidden={{ aberto: "true" }}
+                  rotulo="Ligar"
+                  confirmar="Deixar qualquer pessoa com o link criar conta (como operação)? Lembre de desligar depois."
+                  className="h-9 px-3 shrink-0 rounded-lg border border-line text-ink text-sm font-semibold hover:bg-surface-2"
+                />
+              )}
+            </div>
+          </div>
+        </section>
 
         <section className="mb-6">
           <h2 className="text-sm font-bold text-ink uppercase tracking-wide mb-2">Convidar alguém</h2>
