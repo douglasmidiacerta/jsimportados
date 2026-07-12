@@ -53,7 +53,13 @@ const MODULOS: Modulo[] = [
     href: "/gestao/taxas-cartao",
     pronto: true,
   },
-  { nome: "Caixa", itens: "Abertura, fechamento, sangria", fase: 5 },
+  {
+    nome: "Caixa",
+    itens: "Abertura, fechamento e diferenças",
+    fase: 5,
+    href: "/gestao/caixa",
+    pronto: true,
+  },
   { nome: "Financeiro", itens: "Contas a pagar/receber, extrato", fase: 6 },
   { nome: "CRM & Preços", itens: "Histórico, listas de preço", fase: 7 },
   { nome: "Relatórios", itens: "Lucratividade, curvas ABC, DRE", fase: 8 },
@@ -121,9 +127,9 @@ export default async function GestaoPage() {
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 12 2 2 4-4" /><circle cx="12" cy="12" r="9" /></svg>
           </span>
           <p className="text-sm text-accent-ink">
-            <b>Vendas no ar!</b> A tela de vender já baixa o estoque e registra
-            cartão/fiado como conta a receber. Ajuste as <b>taxas do cartão</b>{" "}
-            com os valores da sua maquininha. Próximo passo: <b>Caixa</b>.
+            <b>Caixa no ar!</b> O balcão abre o caixa de manhã, as vendas em
+            dinheiro/Pix entram sozinhas, e o fechamento mostra a diferença.
+            Próximo passo: <b>Financeiro</b> (baixar contas a receber, DRE).
           </p>
         </div>
 

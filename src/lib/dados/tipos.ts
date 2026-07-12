@@ -266,3 +266,81 @@ export type TaxaCartao = {
   prazo_dias: number;
   ativo: boolean;
 };
+
+// ============================ Fase 5: Caixa ============================
+
+export type CaixaStatus = "aberto" | "fechado";
+export type CaixaTipoMov = "venda" | "sangria" | "suprimento" | "ajuste";
+export type CaixaMeio = "dinheiro" | "pix";
+
+export type CaixaSessao = {
+  id: string;
+  status: CaixaStatus;
+  valor_abertura: number;
+  valor_contado: number | null;
+  esperado_dinheiro: number | null;
+  diferenca: number | null;
+  observacoes_abertura: string | null;
+  observacoes_fechamento: string | null;
+  aberto_por: string | null;
+  aberto_em: string;
+  fechado_em: string | null;
+};
+
+/** Sessão com os totais recomputados (view vw_caixa_resumo). */
+export type CaixaResumo = CaixaSessao & {
+  vendas_dinheiro: number;
+  vendas_pix: number;
+  suprimentos: number;
+  sangrias: number; // negativo
+  ajustes: number;
+  esperado_dinheiro_atual: number;
+  n_movimentos: number;
+};
+
+/**
+ * Subconjunto seguro para o painel da OPERAÇÃO (balcão). NÃO inclui
+ * esperado_dinheiro_atual / esperado_dinheiro: entregar o total esperado ao
+ * cliente da operação furaria a contagem às cegas do fechamento. O painel
+ * mostra só os componentes (abertura, vendas, colocado, tirado).
+ */
+export type CaixaPainel = Pick<
+  CaixaResumo,
+  | "id"
+  | "status"
+  | "valor_abertura"
+  | "aberto_em"
+  | "vendas_dinheiro"
+  | "vendas_pix"
+  | "suprimentos"
+  | "sangrias"
+>;
+
+export type CaixaMovimento = {
+  id: string;
+  sessao_id: string;
+  tipo: CaixaTipoMov;
+  meio: CaixaMeio;
+  valor: number; // assinado
+  venda_id: string | null;
+  observacoes: string | null;
+  criado_em: string;
+};
+
+/** Retorno da RPC fechar_caixa (revelação inline). */
+export type FechamentoResumo = {
+  sessao_id: string;
+  esperado: number;
+  contado: number;
+  diferenca: number;
+  vendas_dinheiro: number;
+  vendas_pix: number;
+  suprimentos: number;
+  sangrias: number;
+  ajustes: number;
+  cartao: number;
+  fiado: number;
+};
+
+/** Estado do formulário de fechamento (mostra o resumo revelado no sucesso). */
+export type EstadoFechar = { erro?: string; resumo?: FechamentoResumo };
