@@ -1,0 +1,134 @@
+import { notFound } from "next/navigation";
+import { exigirGestao } from "@/lib/perfil";
+import { obterVendaGestao } from "@/lib/dados/vendas";
+import { formatarBRL, formatarQtd, formatarData } from "@/lib/formato";
+import { FORMAS_PAGAMENTO } from "@/lib/dados/tipos";
+import { BarraTopo } from "@/components/BarraTopo";
+import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
+
+function rotuloForma(v: string) {
+  return FORMAS_PAGAMENTO.find((f) => f.valor === v)?.rotulo ?? v;
+}
+
+export default async function VendaGestaoDetalhePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const perfil = await exigirGestao();
+  const venda = await obterVendaGestao(id);
+  if (!venda) notFound();
+
+  return (
+    <>
+      <BarraTopo nome={perfil.nome} papel={perfil.papel} area="gestao" />
+      <main className="mx-auto max-w-3xl w-full px-4 py-6 sm:py-10 flex-1">
+        <CabecalhoCadastro
+          titulo="Venda"
+          descricao={`${formatarData(venda.data_venda)} · ${rotuloForma(venda.forma_pagamento)}${venda.cliente_nome ? ` · ${venda.cliente_nome}` : ""}`}
+          voltarHref="/gestao/vendas"
+        />
+
+        {/* Itens com margem */}
+        <div className="rounded-2xl border border-line bg-surface overflow-hidden mb-5">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-muted text-xs uppercase tracking-wide border-b border-line">
+                  <th className="text-left font-semibold px-4 py-3">Produto</th>
+                  <th className="text-right font-semibold px-4 py-3">Qtd</th>
+                  <th className="text-right font-semibold px-4 py-3">Preço</th>
+                  <th className="text-right font-semibold px-4 py-3">Custo</th>
+                  <th className="text-right font-semibold px-4 py-3">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {venda.itens.map((it) => (
+                  <tr key={it.id} className="border-b border-line last:border-0">
+                    <td className="px-4 py-3 text-ink font-medium">{it.produto_nome ?? "—"}</td>
+                    <td className="px-4 py-3 text-right tabular-nums">
+                      {formatarQtd(it.quantidade)}
+                      {it.produto_unidade ? ` ${it.produto_unidade}` : ""}
+                    </td>
+                    <td className="px-4 py-3 text-right tabular-nums text-muted">{formatarBRL(it.preco_unitario)}</td>
+                    <td className="px-4 py-3 text-right tabular-nums text-muted">
+                      {it.custo_unitario == null ? "—" : formatarBRL(it.custo_unitario)}
+                    </td>
+                    <td className="px-4 py-3 text-right tabular-nums text-ink font-semibold">{formatarBRL(it.subtotal)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Totais + margem */}
+        <div className="rounded-2xl border border-line bg-surface-2 p-4 flex flex-col gap-1.5 mb-5">
+          <Linha rotulo="Subtotal" valor={formatarBRL(venda.subtotal)} />
+          {venda.desconto > 0 && <Linha rotulo="Desconto" valor={`− ${formatarBRL(venda.desconto)}`} />}
+          {venda.juros > 0 && <Linha rotulo="Juros (fiado)" valor={`+ ${formatarBRL(venda.juros)}`} />}
+          <Linha rotulo="Total" valor={formatarBRL(venda.total)} forte />
+          <div className="border-t border-line my-1" />
+          <Linha rotulo="Custo (COGS)" valor={formatarBRL(venda.custo_total)} />
+          <Linha
+            rotulo={`Lucro bruto ${venda.custo_completo ? "" : "(parcial)"}`}
+            valor={formatarBRL(venda.lucro_bruto)}
+            forte
+          />
+          {!venda.custo_completo && (
+            <p className="text-xs text-amber mt-1">
+              ⚠️ Algum produto não tem custo registrado — a margem está superestimada.
+            </p>
+          )}
+        </div>
+
+        {/* Contas a receber (cartão/fiado) */}
+        {venda.contas.length > 0 && (
+          <>
+            <h2 className="text-lg font-bold text-ink tracking-tight mb-2">A receber</h2>
+            <div className="rounded-2xl border border-line bg-surface overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-muted text-xs uppercase tracking-wide border-b border-line">
+                      <th className="text-left font-semibold px-4 py-3">Parcela</th>
+                      <th className="text-left font-semibold px-4 py-3">Vence</th>
+                      <th className="text-right font-semibold px-4 py-3">Bruto</th>
+                      <th className="text-right font-semibold px-4 py-3">Taxa</th>
+                      <th className="text-right font-semibold px-4 py-3">Líquido</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {venda.contas.map((c) => (
+                      <tr key={c.id} className="border-b border-line last:border-0">
+                        <td className="px-4 py-3 text-ink">{c.parcela_num}/{c.parcela_total}</td>
+                        <td className="px-4 py-3 text-muted">{formatarData(c.vencimento)}</td>
+                        <td className="px-4 py-3 text-right tabular-nums">{formatarBRL(c.valor_bruto)}</td>
+                        <td className="px-4 py-3 text-right tabular-nums text-danger">
+                          {c.valor_taxa > 0 ? `− ${formatarBRL(c.valor_taxa)}` : "—"}
+                        </td>
+                        <td className="px-4 py-3 text-right tabular-nums text-ink font-semibold">{formatarBRL(c.valor_liquido)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        )}
+      </main>
+    </>
+  );
+}
+
+function Linha({ rotulo, valor, forte }: { rotulo: string; valor: string; forte?: boolean }) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className={forte ? "font-bold text-ink" : "text-muted text-sm"}>{rotulo}</span>
+      <span className={`tabular-nums ${forte ? "text-lg font-extrabold text-ink" : "text-ink font-semibold"}`}>
+        {valor}
+      </span>
+    </div>
+  );
+}

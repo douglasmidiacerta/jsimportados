@@ -161,3 +161,108 @@ export type CompraPayload = {
   itens: ItemCompraInput[];
   despesas: DespesaInput[];
 };
+
+// ============================ Fase 4: Vendas / PDV ============================
+
+export type FormaPagamento = "dinheiro" | "pix" | "cartao" | "fiado";
+
+export const FORMAS_PAGAMENTO: { valor: FormaPagamento; rotulo: string }[] = [
+  { valor: "dinheiro", rotulo: "Dinheiro" },
+  { valor: "pix", rotulo: "Pix" },
+  { valor: "cartao", rotulo: "Cartão" },
+  { valor: "fiado", rotulo: "Fiado (anotar)" },
+];
+
+export const MAX_PARCELAS = 18;
+
+/** Produto disponível no PDV (com preço; SEM custo). */
+export type ProdutoPDV = {
+  id: string;
+  nome: string;
+  unidade: string;
+  foto_path: string | null;
+  categoria_nome: string | null;
+  estoque_atual: number;
+  preco_venda: number;
+};
+
+export type ItemVendaInput = {
+  produto_id: string;
+  quantidade: number;
+  preco_unitario: number;
+};
+
+export type VendaPayload = {
+  cliente_id: string | null;
+  forma_pagamento: FormaPagamento;
+  desconto: number;
+  observacoes: string | null;
+  itens: ItemVendaInput[];
+  cartao?: { modalidade: "debito" | "credito"; parcelas: number };
+  fiado?: { juros: number; prazo_dias: number; vencimento: string | null };
+};
+
+export type Venda = {
+  id: string;
+  cliente_id: string | null;
+  forma_pagamento: FormaPagamento;
+  data_venda: string;
+  subtotal: number;
+  desconto: number;
+  juros: number;
+  total: number;
+  cartao_modalidade: "debito" | "credito" | null;
+  cartao_parcelas: number | null;
+  fiado_vencimento: string | null;
+  status: "liquidado" | "a_receber";
+  observacoes: string | null;
+  criado_em: string;
+};
+
+export type VendaItem = {
+  id: string;
+  produto_id: string;
+  produto_nome: string | null;
+  produto_unidade: string | null;
+  quantidade: number;
+  preco_unitario: number;
+  subtotal: number;
+};
+
+/** Recibo (operação): venda + itens, SEM custo. */
+export type VendaDetalhe = Venda & {
+  cliente_nome: string | null;
+  itens: VendaItem[];
+};
+
+/** Venda na visão da gestão (com custo/lucro). */
+export type VendaGestao = Venda & {
+  cliente_nome: string | null;
+  custo_total: number;
+  custo_completo: boolean;
+  lucro_bruto: number;
+};
+
+export type ContaReceber = {
+  id: string;
+  venda_id: string;
+  cliente_id: string | null;
+  cliente_nome: string | null;
+  tipo: "cartao" | "fiado";
+  parcela_num: number;
+  parcela_total: number;
+  valor_bruto: number;
+  valor_taxa: number;
+  valor_liquido: number;
+  taxa_percentual: number | null;
+  vencimento: string;
+  status: "aberto" | "liquidado" | "cancelado";
+};
+
+export type TaxaCartao = {
+  modalidade: "debito" | "credito";
+  parcelas: number;
+  percentual: number;
+  prazo_dias: number;
+  ativo: boolean;
+};
