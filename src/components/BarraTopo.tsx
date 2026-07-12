@@ -14,7 +14,11 @@ export function BarraTopo({
   const primeiroNome = nome.trim().split(/\s+/)[0] || "você";
 
   return (
-    <header className="sticky top-0 z-10 border-b border-line bg-surface/90 backdrop-blur">
+    <header
+      className={`sticky top-0 z-10 border-b border-line bg-surface/90 backdrop-blur ${
+        area === "gestao" ? "lg:hidden" : ""
+      }`}
+    >
       <div className="mx-auto max-w-5xl px-4 h-16 flex items-center justify-between gap-3">
         <Link href="/" className="flex items-center gap-2.5">
           <span className="w-9 h-9 rounded-lg bg-accent text-white grid place-items-center text-sm font-extrabold tracking-tight">
