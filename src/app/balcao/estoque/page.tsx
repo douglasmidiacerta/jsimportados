@@ -4,13 +4,25 @@ import { listarProdutosBalcao } from "@/lib/dados/produtos";
 import { BarraTopo } from "@/components/BarraTopo";
 import { GradeProdutos } from "@/components/cadastros/GradeProdutos";
 
-export default async function EstoqueBalcaoPage() {
+export default async function EstoqueBalcaoPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ ok?: string }>;
+}) {
   const perfil = await exigirPerfil();
+  const { ok } = await searchParams;
   const produtos = await listarProdutosBalcao();
 
   return (
     <>
       <BarraTopo nome={perfil.nome} papel={perfil.papel} area="balcao" />
+      {ok === "entrada" && (
+        <div className="mx-auto max-w-5xl w-full px-4 pt-4">
+          <p className="text-sm font-semibold text-good bg-[var(--good)]/10 border border-[var(--good)]/30 rounded-xl px-4 py-3">
+            ✅ Entrada registrada! O estoque foi atualizado.
+          </p>
+        </div>
+      )}
       <main className="mx-auto max-w-5xl w-full px-4 py-6 sm:py-10 flex-1">
         <div className="flex items-end justify-between gap-3 flex-wrap mb-5">
           <div>

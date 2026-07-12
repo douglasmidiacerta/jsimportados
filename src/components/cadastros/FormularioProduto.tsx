@@ -6,7 +6,7 @@ import { CampoFormulario } from "./CampoFormulario";
 import { CampoPreco } from "./CampoPreco";
 import { FotoUpload } from "./FotoUpload";
 import { BotaoSalvar } from "./BotaoSalvar";
-import { numeroParaCampoBR } from "@/lib/formato";
+import { numeroParaCampoBR, formatarBRL, formatarQtd } from "@/lib/formato";
 import { UNIDADES, type Categoria, type ProdutoLista, type EstadoForm } from "@/lib/dados/tipos";
 
 type Acao = (prev: EstadoForm, fd: FormData) => Promise<EstadoForm>;
@@ -90,12 +90,25 @@ export function FormularioProduto({
             opcoes={UNIDADES}
           />
 
-          <CampoPreco
-            label="Custo (opcional)"
-            name="custo"
-            defaultValue={produto ? numeroParaCampoBR(produto.custo) : ""}
-            dica="Será atualizado automaticamente pelas compras/importações (Fase 3)."
-          />
+          {produto && (
+            <div className="rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm">
+              <div className="flex justify-between">
+                <span className="text-muted">Custo médio</span>
+                <span className="font-semibold text-ink tabular-nums">
+                  {produto.custo == null ? "—" : formatarBRL(produto.custo)}
+                </span>
+              </div>
+              <div className="flex justify-between mt-1">
+                <span className="text-muted">Em estoque</span>
+                <span className="font-semibold text-ink tabular-nums">
+                  {formatarQtd(produto.estoque_atual)}
+                </span>
+              </div>
+              <p className="text-xs text-muted mt-2">
+                Atualizados automaticamente pelas compras e entradas de estoque.
+              </p>
+            </div>
+          )}
 
           <FotoUpload name="foto_path" valorInicial={produto?.foto_path} />
 

@@ -1,11 +1,20 @@
 import { criarClienteServidor } from "@/lib/supabase/server";
 import type { Produto, ProdutoLista } from "./tipos";
 
-type LinhaProduto = Omit<Produto, "preco_venda" | "custo"> & {
+type CustoEmbed = { custo: string | number | null };
+
+type LinhaProduto = Omit<Produto, "preco_venda" | "custo" | "estoque_atual"> & {
   preco_venda: string | number;
-  custo?: string | number | null;
+  estoque_atual?: string | number | null;
   categorias: { nome: string } | null;
+  // custo vem da tabela isolada produtos_custo (só no caminho da gestão)
+  produtos_custo?: CustoEmbed | CustoEmbed[] | null;
 };
+
+function custoDoEmbed(pc: CustoEmbed | CustoEmbed[] | null | undefined): number | null {
+  const obj = Array.isArray(pc) ? pc[0] : pc;
+  return obj?.custo == null ? null : Number(obj.custo);
+}
 
 function normalizarLinha(row: LinhaProduto): ProdutoLista {
   return {
@@ -14,8 +23,9 @@ function normalizarLinha(row: LinhaProduto): ProdutoLista {
     categoria_id: row.categoria_id,
     unidade: row.unidade,
     preco_venda: Number(row.preco_venda),
-    // Se a projeção não incluir custo (caminho do balcão), row.custo é undefined -> null.
-    custo: row.custo == null ? null : Number(row.custo),
+    // custo só existe no caminho da gestão (embed produtos_custo); no balcão é null.
+    custo: custoDoEmbed(row.produtos_custo),
+    estoque_atual: Number(row.estoque_atual ?? 0),
     foto_path: row.foto_path,
     observacoes: row.observacoes,
     ativo: row.ativo,
@@ -23,11 +33,11 @@ function normalizarLinha(row: LinhaProduto): ProdutoLista {
   };
 }
 
-// Gestão pode ver o custo.
-const COLUNAS_GESTAO = "*, categorias(nome)";
+// Gestão pode ver o custo (join na tabela isolada produtos_custo).
+const COLUNAS_GESTAO = "*, categorias(nome), produtos_custo(custo)";
 // Balcão (operação): projeção SEM custo — o custo/margem nunca trafega para a operação.
 const COLUNAS_BALCAO =
-  "id, nome, categoria_id, unidade, preco_venda, foto_path, observacoes, ativo, categorias(nome)";
+  "id, nome, categoria_id, unidade, preco_venda, estoque_atual, foto_path, observacoes, ativo, categorias(nome)";
 
 /** Lista produtos para o Modo Gestão (inclui custo e nome da categoria). */
 export async function listarProdutos(

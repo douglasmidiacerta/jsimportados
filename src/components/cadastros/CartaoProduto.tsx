@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatarBRL, urlFoto } from "@/lib/formato";
+import { formatarBRL, formatarQtd, urlFoto } from "@/lib/formato";
 import type { ProdutoLista } from "@/lib/dados/tipos";
 
 /** Card de produto para grades (balcão e listas visuais). */
@@ -41,6 +41,15 @@ export function CartaoProduto({
         </p>
         <p className="mt-1 text-lg font-extrabold text-ink tabular-nums">
           {produto.preco_venda > 0 ? formatarBRL(produto.preco_venda) : "—"}
+        </p>
+        <p className="mt-0.5 text-xs font-medium">
+          {produto.estoque_atual > 0 ? (
+            <span className="text-good">
+              {formatarQtd(produto.estoque_atual)} em estoque
+            </span>
+          ) : (
+            <span className="text-muted">Sem estoque</span>
+          )}
         </p>
       </div>
     </>

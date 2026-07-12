@@ -18,13 +18,25 @@ const MODULOS: Modulo[] = [
     href: "/gestao/cadastros",
     pronto: true,
   },
-  { nome: "Compra / Importação", itens: "Multi-moeda, rateio e custo real", fase: 3 },
+  {
+    nome: "Compra / Importação",
+    itens: "Multi-moeda, rateio e custo real",
+    fase: 3,
+    href: "/gestao/compras",
+    pronto: true,
+  },
+  {
+    nome: "Estoque",
+    itens: "Saldo, custo médio e valor parado",
+    fase: 3,
+    href: "/gestao/estoque",
+    pronto: true,
+  },
   { nome: "Vendas / PDV", itens: "Pedidos, formas de pagamento", fase: 4 },
   { nome: "Caixa", itens: "Abertura, fechamento, sangria", fase: 5 },
   { nome: "Financeiro", itens: "Contas a pagar/receber, extrato", fase: 6 },
   { nome: "CRM & Preços", itens: "Histórico, listas de preço", fase: 7 },
   { nome: "Relatórios", itens: "Lucratividade, curvas ABC, DRE", fase: 8 },
-  { nome: "Estoque", itens: "Movimentações e curva ABC", fase: 8 },
 ];
 
 function CartaoModulo({ m }: { m: Modulo }) {
@@ -89,9 +101,9 @@ export default async function GestaoPage() {
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 12 2 2 4-4" /><circle cx="12" cy="12" r="9" /></svg>
           </span>
           <p className="text-sm text-accent-ink">
-            <b>Cadastros no ar!</b> Comece cadastrando seus produtos, categorias,
-            fornecedores e clientes. Próximo passo: <b>Compra / Importação</b>{" "}
-            (custo real em multi-moeda).
+            <b>Compra / Importação e Estoque no ar!</b> Registre uma compra no
+            Paraguai (em US$/G$) e o sistema calcula o <b>custo real</b> e dá
+            entrada no estoque. Próximo passo: <b>Vendas / PDV</b>.
           </p>
         </div>
 

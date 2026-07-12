@@ -38,6 +38,21 @@ export function urlFoto(path: string | null | undefined): string | null {
   return `${SUPABASE_URL}/storage/v1/object/public/produtos/${path}`;
 }
 
+/** Formata uma quantidade de estoque (pt-BR, sem forçar casas decimais). */
+export function formatarQtd(valor: number | string | null | undefined): string {
+  const n = typeof valor === "string" ? Number(valor) : (valor ?? 0);
+  if (!Number.isFinite(n)) return "0";
+  return n.toLocaleString("pt-BR", { maximumFractionDigits: 3 });
+}
+
+/** Formata uma data "YYYY-MM-DD" como "DD/MM/AAAA" (sem depender de fuso). */
+export function formatarData(data: string | null | undefined): string {
+  if (!data) return "";
+  const m = String(data).slice(0, 10).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return String(data);
+  return `${m[3]}/${m[2]}/${m[1]}`;
+}
+
 /** Normaliza texto para busca (remove acentos, minúsculas). */
 export function normalizar(texto: string): string {
   return texto

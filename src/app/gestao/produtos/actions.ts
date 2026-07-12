@@ -19,6 +19,8 @@ function mensagemErro(error: { code?: string; message?: string }): string {
   return "Não deu para salvar. Tente de novo.";
 }
 
+// Obs.: o custo NÃO é definido aqui — ele é o custo médio, mantido pelas
+// compras/entradas (trigger de estoque). Editar o produto não mexe no custo.
 function lerCampos(fd: FormData) {
   return {
     nome: String(fd.get("nome") ?? "").trim(),
@@ -27,10 +29,6 @@ function lerCampos(fd: FormData) {
       | null,
     unidade: String(fd.get("unidade") ?? "un").trim() || "un",
     preco_venda: parseMoedaBR(String(fd.get("preco_venda") ?? "")),
-    custo: (() => {
-      const bruto = String(fd.get("custo") ?? "").trim();
-      return bruto ? parseMoedaBR(bruto) : null;
-    })(),
     foto_path: (String(fd.get("foto_path") ?? "").trim() || null) as
       | string
       | null,
