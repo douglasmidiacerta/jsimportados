@@ -119,3 +119,22 @@ h1, h2, h3 {
     transition-duration: 0.001ms !important;
   }
 }
+
+/* ============================================================
+   Modo Gestão no DESKTOP: o conteúdo encosta no menu lateral em vez de
+   flutuar no centro (o que deixava um vazão ao lado da sidebar).
+   - Telas de LISTA/painel usam a largura toda.
+   - Telas de FORMULÁRIO (contêm <form>) mantêm largura confortável.
+   No mobile nada muda (o menu lateral nem aparece).
+   ============================================================ */
+@media (min-width: 1024px) {
+  .area-gestao main {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .area-gestao main:not(:has(form)) {
+    max-width: none;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}

@@ -17,7 +17,7 @@ export default async function GestaoLayout({
   return (
     <div className="flex-1 flex flex-col lg:flex-row min-h-0">
       <SidebarGestao nome={perfil.nome} />
-      <div className="flex-1 flex flex-col min-w-0">{children}</div>
+      <div className="area-gestao flex-1 flex flex-col min-w-0">{children}</div>
     </div>
   );
 }
