@@ -70,5 +70,18 @@ extrato (regime caixa) + DRE (competência). Cada elo guarda `criado_por` +
 | Ajuste manual de estoque / estornos / cadastros sensíveis | ✖ | ✔ |
 | Usuários, convites, papéis, config da empresa | ✖ | ✔ |
 
+## 5. Decisões do dono (12/07/2026)
+- **F1 AMPLIADO — TODA venda exige caixa aberto** (dinheiro, Pix E cartão):
+  toda venda pertence a uma sessão de caixa; nada fica fora do registro.
+- **Cartão rastreado por MAQUININHA (adquirente)**: cada venda de cartão
+  registra QUAL maquininha passou → valor bruto → taxa descontada pela
+  adquirente → líquido → data em que caiu. (Cadastro de maquininhas + taxas
+  por maquininha; conciliação dos recebíveis por adquirente entra na Onda 2.)
+- **"Tudo tem que ter registros/logs"**: trilha de auditoria (F6) é requisito
+  central — empresa organizada, informação de tudo.
+- **F2**: divergência de caixa exige justificativa + relatório de divergências.
+- **F3**: desconto da operação SEM teto (mantém livre).
+- **F10**: vender sem estoque vira interruptor POR PRODUTO (padrão MarketUp).
+
 > Este arquivo é o contrato de regras. Toda leva/onda que criar trava nova
 > ATUALIZA este documento (com o nº da migration que a implementou).
