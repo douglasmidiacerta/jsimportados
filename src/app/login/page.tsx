@@ -1,21 +1,38 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { Suspense, useActionState, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { autenticar, type EstadoAuth } from "./actions";
 
 const estadoInicial: EstadoAuth = {};
+type Modo = "entrar" | "criar" | "reset";
 
 export default function LoginPage() {
-  const [modo, setModo] = useState<"entrar" | "criar">("entrar");
-  const [estado, formAction, enviando] = useActionState(
-    autenticar,
-    estadoInicial,
+  return (
+    <Suspense>
+      <LoginConteudo />
+    </Suspense>
   );
+}
+
+function LoginConteudo() {
+  const sp = useSearchParams();
+  const erroUrl = sp.get("erro");
+  const avisoUrl =
+    erroUrl === "inativo"
+      ? "Sua conta foi desativada. Fale com o gestor."
+      : erroUrl === "reset"
+        ? "O link de recuperação expirou. Peça um novo."
+        : erroUrl === "sessao"
+          ? "Sua sessão expirou. Entre de novo."
+          : null;
+
+  const [modo, setModo] = useState<Modo>("entrar");
+  const [estado, formAction, enviando] = useActionState(autenticar, estadoInicial);
 
   return (
     <main className="flex flex-1 items-center justify-center p-5">
       <div className="w-full max-w-[420px]">
-        {/* Marca */}
         <div className="flex flex-col items-center text-center mb-8">
           <div className="w-16 h-16 rounded-2xl bg-accent text-white grid place-items-center text-2xl font-extrabold tracking-tight shadow-lg">
             JS
@@ -29,61 +46,48 @@ export default function LoginPage() {
         </div>
 
         <div className="bg-surface border border-line rounded-2xl p-6 shadow-[var(--shadow)]">
-          {/* Alternador */}
-          <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-surface-2 border border-line mb-6">
-            <button
-              type="button"
-              onClick={() => setModo("entrar")}
-              className={`h-10 rounded-lg text-sm font-semibold transition-colors ${
-                modo === "entrar"
-                  ? "bg-surface text-ink shadow-[var(--shadow)]"
-                  : "text-muted"
-              }`}
-            >
-              Entrar
-            </button>
-            <button
-              type="button"
-              onClick={() => setModo("criar")}
-              className={`h-10 rounded-lg text-sm font-semibold transition-colors ${
-                modo === "criar"
-                  ? "bg-surface text-ink shadow-[var(--shadow)]"
-                  : "text-muted"
-              }`}
-            >
-              Criar conta
-            </button>
-          </div>
+          {modo !== "reset" && (
+            <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-surface-2 border border-line mb-6">
+              <button
+                type="button"
+                onClick={() => setModo("entrar")}
+                className={`h-10 rounded-lg text-sm font-semibold transition-colors ${modo === "entrar" ? "bg-surface text-ink shadow-[var(--shadow)]" : "text-muted"}`}
+              >
+                Entrar
+              </button>
+              <button
+                type="button"
+                onClick={() => setModo("criar")}
+                className={`h-10 rounded-lg text-sm font-semibold transition-colors ${modo === "criar" ? "bg-surface text-ink shadow-[var(--shadow)]" : "text-muted"}`}
+              >
+                Criar conta
+              </button>
+            </div>
+          )}
+
+          {modo === "reset" && (
+            <h2 className="text-lg font-bold text-ink mb-4">Recuperar senha</h2>
+          )}
 
           <form action={formAction} className="flex flex-col gap-4">
             <input type="hidden" name="modo" value={modo} />
             {modo === "criar" && (
+              <Campo label="Seu nome" name="nome" type="text" placeholder="Ex.: Maria" autoComplete="name" />
+            )}
+            <Campo label="E-mail" name="email" type="email" placeholder="voce@exemplo.com" autoComplete="email" />
+            {modo !== "reset" && (
               <Campo
-                label="Seu nome"
-                name="nome"
-                type="text"
-                placeholder="Ex.: Maria"
-                autoComplete="name"
+                label="Senha"
+                name="senha"
+                type="password"
+                placeholder="••••••••"
+                autoComplete={modo === "entrar" ? "current-password" : "new-password"}
               />
             )}
-            <Campo
-              label="E-mail"
-              name="email"
-              type="email"
-              placeholder="voce@exemplo.com"
-              autoComplete="email"
-            />
-            <Campo
-              label="Senha"
-              name="senha"
-              type="password"
-              placeholder="••••••••"
-              autoComplete={modo === "entrar" ? "current-password" : "new-password"}
-            />
 
-            {estado.erro && (
+            {(estado.erro || avisoUrl) && (
               <p className="text-sm text-danger font-medium bg-[var(--danger)]/10 border border-[var(--danger)]/30 rounded-lg px-3 py-2">
-                {estado.erro}
+                {estado.erro ?? avisoUrl}
               </p>
             )}
             {estado.aviso && (
@@ -101,14 +105,35 @@ export default function LoginPage() {
                 ? "Aguarde…"
                 : modo === "entrar"
                   ? "Entrar"
-                  : "Criar conta"}
+                  : modo === "criar"
+                    ? "Criar conta"
+                    : "Enviar link"}
             </button>
           </form>
+
+          {modo === "entrar" && (
+            <button
+              type="button"
+              onClick={() => setModo("reset")}
+              className="mt-4 text-sm font-semibold text-accent-ink hover:underline block mx-auto"
+            >
+              Esqueci a senha
+            </button>
+          )}
+          {modo === "reset" && (
+            <button
+              type="button"
+              onClick={() => setModo("entrar")}
+              className="mt-4 text-sm font-semibold text-muted hover:text-ink block mx-auto"
+            >
+              Voltar ao login
+            </button>
+          )}
         </div>
 
         <p className="text-center text-xs text-muted mt-5">
           {modo === "criar"
-            ? "A primeira conta criada será a de gestão (dono)."
+            ? "Só quem foi convidado pelo gestor consegue criar uma conta."
             : "Acesse com sua conta para continuar."}
         </p>
       </div>

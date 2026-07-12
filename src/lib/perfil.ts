@@ -23,16 +23,18 @@ export async function exigirPerfil(): Promise<Perfil> {
 
   if (!user) redirect("/login");
 
-  const { data: perfil } = await supabase
+  const { data: perfil, error } = await supabase
     .from("perfis")
     .select("id, nome, papel, ativo")
     .eq("id", user.id)
     .single();
 
-  // Se o perfil ainda não existe (raro — trigger cria no cadastro), assume operação.
-  if (!perfil) {
-    return { id: user.id, nome: "", papel: "operacao", ativo: true };
-  }
+  // Fail-closed: sem perfil legível (erro/RLS) NÃO liberamos acesso — o único
+  // ponto que enforce 'ativo' no app é aqui; assumir operação ativa abriria brecha.
+  if (error || !perfil) redirect("/login?erro=sessao");
+
+  // Conta desativada pela gestão: bloqueia o acesso a tudo.
+  if (perfil.ativo === false) redirect("/login?erro=inativo");
 
   return perfil as Perfil;
 }

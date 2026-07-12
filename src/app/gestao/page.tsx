@@ -81,6 +81,13 @@ const MODULOS: Modulo[] = [
     href: "/gestao/relatorios",
     pronto: true,
   },
+  {
+    nome: "Usuários e acesso",
+    itens: "Convidar, promover e desligar operadores",
+    fase: 9,
+    href: "/gestao/usuarios",
+    pronto: true,
+  },
 ];
 
 function CartaoModulo({ m }: { m: Modulo }) {

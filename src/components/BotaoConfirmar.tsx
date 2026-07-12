@@ -9,13 +9,20 @@ export function BotaoConfirmar({
   rotulo,
   confirmar,
   className,
+  variante,
 }: {
   action: Acao;
   hidden: Record<string, string>;
   rotulo: string;
   confirmar: string;
   className?: string;
+  variante?: "sutil" | "perigo";
 }) {
+  const classe =
+    className ??
+    (variante === "perigo"
+      ? "h-9 px-3 rounded-lg border border-[var(--danger)]/40 text-danger text-sm font-semibold hover:bg-[var(--danger)]/10"
+      : "text-xs font-semibold text-muted hover:text-danger underline decoration-dotted underline-offset-2");
   return (
     <form
       action={action}
@@ -26,13 +33,7 @@ export function BotaoConfirmar({
       {Object.entries(hidden).map(([k, v]) => (
         <input key={k} type="hidden" name={k} value={v} />
       ))}
-      <button
-        type="submit"
-        className={
-          className ??
-          "text-xs font-semibold text-muted hover:text-danger underline decoration-dotted underline-offset-2"
-        }
-      >
+      <button type="submit" className={classe}>
         {rotulo}
       </button>
     </form>

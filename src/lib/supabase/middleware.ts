@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config";
 
 /** Rotas públicas que não exigem login. */
-const ROTAS_PUBLICAS = ["/login", "/auth"];
+const ROTAS_PUBLICAS = ["/login", "/auth", "/redefinir"];
 
 /**
  * Renova a sessão do Supabase a cada requisição e protege as rotas privadas.
