@@ -12,4 +12,4 @@ export const SUPABASE_URL =
 
 export const SUPABASE_ANON_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
-  "sb_publishable_ltaNA7nnVozoSCOcZIjg";
+  "sb_publishable_FhxBkFhM8XdMh2FHxiereQ_xo2ay8MJ";
