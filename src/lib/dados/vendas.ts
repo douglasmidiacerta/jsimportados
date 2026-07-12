@@ -225,8 +225,11 @@ export async function obterVendaGestao(
       valor_bruto: n(cr.valor_bruto),
       valor_taxa: n(cr.valor_taxa),
       valor_liquido: n(cr.valor_liquido),
+      valor_recebido: n(cr.valor_recebido),
+      saldo: Math.round((n(cr.valor_liquido) - n(cr.valor_recebido)) * 100) / 100,
       taxa_percentual: cr.taxa_percentual == null ? null : n(cr.taxa_percentual),
       vencimento: String(cr.vencimento),
+      liquidado_em: (cr.liquidado_em as string) ?? null,
       status: cr.status as "aberto" | "liquidado" | "cancelado",
     };
   });

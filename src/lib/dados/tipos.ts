@@ -254,8 +254,11 @@ export type ContaReceber = {
   valor_bruto: number;
   valor_taxa: number;
   valor_liquido: number;
+  valor_recebido: number; // Fase 6: denorm do ledger recebimentos
+  saldo: number; // Fase 6: valor_liquido - valor_recebido (derivado)
   taxa_percentual: number | null;
   vencimento: string;
+  liquidado_em: string | null; // Fase 6
   status: "aberto" | "liquidado" | "cancelado";
 };
 
@@ -344,3 +347,117 @@ export type FechamentoResumo = {
 
 /** Estado do formulário de fechamento (mostra o resumo revelado no sucesso). */
 export type EstadoFechar = { erro?: string; resumo?: FechamentoResumo };
+
+// ========================== Fase 6: Financeiro ==========================
+
+export type TipoContaPagar = "compra" | "despesa";
+export type StatusContaPagar = "aberto" | "pago" | "cancelado";
+export type FormaFinanceira =
+  | "dinheiro"
+  | "pix"
+  | "cartao"
+  | "transferencia"
+  | "boleto"
+  | "outro";
+
+export type DespesaCategoria = { id: string; nome: string; ativo: boolean };
+
+export type ContaPagar = {
+  id: string;
+  tipo: TipoContaPagar;
+  categoria_id: string | null;
+  categoria_nome: string | null;
+  fornecedor_id: string | null;
+  fornecedor_nome: string | null;
+  compra_id: string | null;
+  descricao: string;
+  valor: number;
+  competencia: string;
+  vencimento: string;
+  status: StatusContaPagar;
+  valor_pago: number;
+  saldo: number; // derivado: valor - valor_pago
+  pago_em: string | null;
+  observacoes: string | null;
+  parcial: boolean; // status 'aberto' && valor_pago > 0
+  vencida: boolean; // vencimento < hoje && status 'aberto'
+};
+
+export type Pagamento = {
+  id: string;
+  conta_pagar_id: string;
+  data_pagamento: string;
+  valor: number; // >0 pagamento; <0 estorno
+  forma_pagamento: FormaFinanceira | null;
+  estorno_de: string | null;
+  observacoes: string | null;
+  criado_em: string;
+};
+
+export type Recebimento = {
+  id: string;
+  conta_receber_id: string;
+  data_recebimento: string;
+  valor: number; // líquido; <0 estorno
+  forma_pagamento: FormaFinanceira | null;
+  estorno_de: string | null;
+  observacoes: string | null;
+  criado_em: string;
+};
+
+/** Conta a pagar com o histórico de pagamentos (detalhe). */
+export type ContaPagarDetalhe = ContaPagar & { pagamentos: Pagamento[] };
+
+/** Conta a receber com o histórico de recebimentos (detalhe). */
+export type ContaReceberDetalhe = ContaReceber & { recebimentos: Recebimento[] };
+
+export type DespesaPayload = {
+  categoria_id: string | null;
+  fornecedor_id: string | null;
+  descricao: string;
+  valor: number;
+  competencia: string | null;
+  vencimento: string | null;
+  pagar_agora?: boolean;
+  forma_pagamento?: string | null;
+  observacoes?: string | null;
+};
+
+export type ExtratoOrigem =
+  | "saldo_inicial"
+  | "venda"
+  | "recebimento"
+  | "pagamento";
+
+export type ExtratoLinha = {
+  data: string;
+  origem: ExtratoOrigem;
+  descricao: string;
+  entrada: number;
+  saida: number;
+  valor: number;
+  ref_id: string | null;
+  saldo: number;
+};
+
+export type Extrato = {
+  linhas: ExtratoLinha[];
+  abertura: number;
+  entradas: number;
+  saidas: number;
+  saldo_final: number;
+};
+
+export type DreMes = {
+  mes: string;
+  receita_produtos: number;
+  cmv: number;
+  cmv_completo: boolean;
+  lucro_bruto: number;
+  despesas_operacionais: number;
+  taxas_cartao: number;
+  juros_fiado: number;
+  resultado: number;
+};
+
+export type FinanceiroConfig = { saldo_inicial: number; data_inicial: string };
