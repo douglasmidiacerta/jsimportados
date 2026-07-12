@@ -42,6 +42,8 @@ export type Cliente = {
   documento: string | null;
   observacoes: string | null;
   ativo: boolean;
+  aniversario: string | null; // Fase 7 (YYYY-MM-DD)
+  lista_preco_id: string | null; // Fase 7: lista de preço padrão do cliente
 };
 
 /** Estado retornado pelas Server Actions de formulário. */
@@ -183,7 +185,8 @@ export type ProdutoPDV = {
   foto_path: string | null;
   categoria_nome: string | null;
   estoque_atual: number;
-  preco_venda: number;
+  preco_venda: number; // = preço da lista padrão (Varejo)
+  precos: Record<string, number>; // Fase 7: lista_id -> preço override (só listas != padrão)
 };
 
 export type ItemVendaInput = {
@@ -461,3 +464,70 @@ export type DreMes = {
 };
 
 export type FinanceiroConfig = { saldo_inicial: number; data_inicial: string };
+
+// ===================== Fase 7: CRM & Listas de Preço =====================
+
+export type ListaPreco = {
+  id: string;
+  nome: string;
+  is_default: boolean;
+  ativo: boolean;
+  ordem: number;
+};
+
+export type Etiqueta = {
+  id: string;
+  nome: string;
+  cor: string; // token: accent | good | amber | danger
+  ativo: boolean;
+};
+
+export type CrmTipo = "nota" | "lembrete" | "ligacao" | "whatsapp";
+
+export const TIPOS_INTERACAO: { valor: CrmTipo; rotulo: string }[] = [
+  { valor: "nota", rotulo: "Anotação" },
+  { valor: "lembrete", rotulo: "Lembrete" },
+  { valor: "ligacao", rotulo: "Ligação" },
+  { valor: "whatsapp", rotulo: "WhatsApp" },
+];
+
+export type CrmInteracao = {
+  id: string;
+  cliente_id: string;
+  tipo: CrmTipo;
+  texto: string;
+  lembrete_em: string | null;
+  concluido: boolean;
+  criado_em: string;
+};
+
+export type CrmLembretePendente = CrmInteracao & { cliente_nome: string };
+
+export type CarteiraCliente = {
+  cliente_id: string;
+  nome: string;
+  telefone: string | null;
+  n_compras: number;
+  total_comprado: number;
+  ultima_compra: string | null;
+  ticket_medio: number;
+  ranking: number;
+};
+
+export type Aniversariante = {
+  cliente_id: string;
+  nome: string;
+  telefone: string | null;
+  aniversario: string;
+  mes: number;
+  dia: number;
+};
+
+/** Linha do editor de preços por lista (matriz de uma lista). */
+export type PrecoProdutoLista = {
+  produto_id: string;
+  nome: string;
+  preco_venda: number; // Varejo (referência)
+  override: number | null; // preço específico da lista (null = herda Varejo)
+  preco_efetivo: number;
+};

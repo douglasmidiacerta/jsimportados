@@ -1,4 +1,5 @@
 import { exigirGestao } from "@/lib/perfil";
+import { listarListasPreco } from "@/lib/dados/listasPreco";
 import { BarraTopo } from "@/components/BarraTopo";
 import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
 import { FormularioCliente } from "@/components/cadastros/FormularioCliente";
@@ -6,6 +7,7 @@ import { criarCliente } from "../actions";
 
 export default async function NovoClientePage() {
   const perfil = await exigirGestao();
+  const listas = await listarListasPreco();
   return (
     <>
       <BarraTopo nome={perfil.nome} papel={perfil.papel} area="gestao" />
@@ -14,6 +16,7 @@ export default async function NovoClientePage() {
         <FormularioCliente
           action={criarCliente}
           voltarHref="/gestao/clientes"
+          listas={listas}
         />
       </main>
     </>

@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { CampoFormulario } from "./CampoFormulario";
 import { BotaoSalvar } from "./BotaoSalvar";
-import type { Cliente, EstadoForm } from "@/lib/dados/tipos";
+import type { Cliente, ListaPreco, EstadoForm } from "@/lib/dados/tipos";
 
 type Acao = (prev: EstadoForm, fd: FormData) => Promise<EstadoForm>;
 
@@ -12,10 +12,12 @@ export function FormularioCliente({
   action,
   cliente,
   voltarHref,
+  listas,
 }: {
   action: Acao;
   cliente?: Cliente;
   voltarHref: string;
+  listas?: ListaPreco[]; // Fase 7: quando presente (gestão), mostra aniversário + lista padrão
 }) {
   const [estado, formAction, enviando] = useActionState(action, {});
 
@@ -45,6 +47,29 @@ export function FormularioCliente({
         defaultValue={cliente?.documento ?? ""}
         placeholder="Só números"
       />
+
+      {listas && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <CampoFormulario
+            label="Aniversário (opcional)"
+            name="aniversario"
+            type="date"
+            defaultValue={cliente?.aniversario ?? ""}
+          />
+          <CampoFormulario
+            label="Lista de preço padrão"
+            name="lista_preco_id"
+            as="select"
+            defaultValue={cliente?.lista_preco_id ?? ""}
+            opcaoVazia="Padrão (Varejo)"
+            opcoes={listas
+              .filter((l) => !l.is_default)
+              .map((l) => ({ valor: l.id, rotulo: l.nome }))}
+            dica="Usada automaticamente na venda deste cliente"
+          />
+        </div>
+      )}
+
       <CampoFormulario
         label="Observações"
         name="observacoes"

@@ -13,6 +13,8 @@ function lerCampos(fd: FormData) {
     telefone: opt("telefone"),
     documento: opt("documento"),
     observacoes: opt("observacoes"),
+    aniversario: opt("aniversario"), // Fase 7 (YYYY-MM-DD ou null)
+    lista_preco_id: opt("lista_preco_id"), // Fase 7 (uuid ou null = Varejo)
   };
 }
 

@@ -13,27 +13,39 @@ import {
   urlFoto,
 } from "@/lib/formato";
 import { calcularVenda } from "@/lib/vendas/calculo";
+import { precoNaLista } from "@/lib/vendas/preco";
 import {
   type ProdutoPDV,
   type Cliente,
+  type ListaPreco,
   type FormaPagamento,
   type VendaPayload,
   type EstadoForm,
 } from "@/lib/dados/tipos";
 
 type Acao = (prev: EstadoForm, fd: FormData) => Promise<EstadoForm>;
-type ItemCarrinho = { produto: ProdutoPDV; qtd: string; preco: number };
+type ItemCarrinho = {
+  produto: ProdutoPDV;
+  qtd: string;
+  preco: number;
+  precoEditado: boolean;
+  versao: number; // muda só em re-precificação por lista (força remount do input)
+};
 
 const qtdNum = (c: ItemCarrinho) => parseMoedaBR(c.qtd);
 
 export function PDV({
   produtos,
   clientes,
+  listas,
+  listaDefaultId,
   podeEditarPreco,
   action,
 }: {
   produtos: ProdutoPDV[];
   clientes: Cliente[];
+  listas: ListaPreco[];
+  listaDefaultId: string;
   podeEditarPreco: boolean;
   action: Acao;
 }) {
@@ -43,10 +55,14 @@ export function PDV({
   const [carrinho, setCarrinho] = useState<ItemCarrinho[]>([]);
   const [desconto, setDesconto] = useState("");
   const [clienteId, setClienteId] = useState("");
+  const [listaAtualId, setListaAtualId] = useState(listaDefaultId);
   const [forma, setForma] = useState<FormaPagamento | null>(null);
   const [modalidade, setModalidade] = useState<"debito" | "credito">("credito");
   const [parcelas, setParcelas] = useState(1);
   const [juros, setJuros] = useState("");
+
+  const listaAtual = listas.find((l) => l.id === listaAtualId);
+  const temOutrasListas = listas.length > 1;
 
   const filtrados = useMemo(() => {
     const q = normalizar(busca);
@@ -76,9 +92,61 @@ export function PDV({
         return arr.map((x, j) =>
           j === i ? { ...x, qtd: formatarQtd(qtdNum(x) + 1) } : x,
         );
-      return [...arr, { produto: p, qtd: "1", preco: p.preco_venda }];
+      return [
+        ...arr,
+        {
+          produto: p,
+          qtd: "1",
+          preco: precoNaLista(p, listaAtualId, listaDefaultId),
+          precoEditado: false,
+          versao: 0,
+        },
+      ];
     });
     setBusca("");
+  }
+
+  // Aplica uma lista: re-precifica só itens NÃO editados à mão (bump de versão
+  // remonta o input com o novo preço; itens editados ficam intactos).
+  function aplicarLista(listaId: string) {
+    setListaAtualId(listaId);
+    setCarrinho((arr) =>
+      arr.map((x) =>
+        x.precoEditado
+          ? x
+          : {
+              ...x,
+              preco: precoNaLista(x.produto, listaId, listaDefaultId),
+              versao: x.versao + 1,
+            },
+      ),
+    );
+  }
+
+  // Ao escolher o cliente: usa a lista padrão dele (se ativa), senão Varejo.
+  function aplicarClienteLista(id: string) {
+    setClienteId(id);
+    const cli = clientes.find((c) => c.id === id);
+    const alvo =
+      cli?.lista_preco_id && listas.some((l) => l.id === cli.lista_preco_id)
+        ? cli.lista_preco_id
+        : listaDefaultId;
+    aplicarLista(alvo);
+  }
+
+  function voltarAoPrecoDaLista(i: number) {
+    setCarrinho((arr) =>
+      arr.map((x, j) =>
+        j === i
+          ? {
+              ...x,
+              preco: precoNaLista(x.produto, listaAtualId, listaDefaultId),
+              precoEditado: false,
+              versao: x.versao + 1,
+            }
+          : x,
+      ),
+    );
   }
   const incQtd = (i: number, d: number) =>
     setCarrinho((arr) =>
@@ -90,7 +158,9 @@ export function PDV({
     setCarrinho((arr) => arr.map((x, j) => (j === i ? { ...x, qtd: v } : x)));
   const setPreco = (i: number, v: string) =>
     setCarrinho((arr) =>
-      arr.map((x, j) => (j === i ? { ...x, preco: parseMoedaBR(v) } : x)),
+      arr.map((x, j) =>
+        j === i ? { ...x, preco: parseMoedaBR(v), precoEditado: true } : x,
+      ),
     );
   const remover = (i: number) =>
     setCarrinho((arr) => arr.filter((_, j) => j !== i));
@@ -174,15 +244,29 @@ export function PDV({
                   <span className="flex-1 min-w-0">
                     <span className="block font-semibold text-ink truncate">{c.produto.nome}</span>
                     {podeEditarPreco ? (
-                      <span className="mt-1 flex items-center gap-1 text-sm">
-                        <span className="text-muted">R$</span>
-                        <input
-                          type="text"
-                          inputMode="decimal"
-                          defaultValue={numeroParaCampoBR(c.preco)}
-                          onChange={(e) => setPreco(i, e.target.value)}
-                          className="w-20 rounded-lg border border-line bg-surface-2 px-2 py-1 text-ink"
-                        />
+                      <span className="mt-1 flex items-center gap-2 text-sm flex-wrap">
+                        <span className="flex items-center gap-1">
+                          <span className="text-muted">R$</span>
+                          <input
+                            // key estável por item; só remonta quando a lista
+                            // re-precifica (versao++), nunca enquanto o operador digita
+                            key={`px-${c.produto.id}-${c.versao}`}
+                            type="text"
+                            inputMode="decimal"
+                            defaultValue={numeroParaCampoBR(c.preco)}
+                            onChange={(e) => setPreco(i, e.target.value)}
+                            className="w-20 rounded-lg border border-line bg-surface-2 px-2 py-1 text-ink"
+                          />
+                        </span>
+                        {c.precoEditado && (
+                          <button
+                            type="button"
+                            onClick={() => voltarAoPrecoDaLista(i)}
+                            className="text-[11px] font-semibold text-accent-ink underline decoration-dotted underline-offset-2"
+                          >
+                            preço manual · voltar à lista
+                          </button>
+                        )}
                       </span>
                     ) : (
                       <span className="block text-sm text-muted">{formatarBRL(c.preco)}</span>
@@ -276,7 +360,7 @@ export function PDV({
         </span>
         <select
           value={clienteId}
-          onChange={(e) => setClienteId(e.target.value)}
+          onChange={(e) => aplicarClienteLista(e.target.value)}
           className="w-full min-h-[52px] rounded-xl border border-line bg-surface-2 px-4 text-base text-ink outline-none focus:border-accent appearance-none"
         >
           <option value="">Sem cliente</option>
@@ -285,6 +369,25 @@ export function PDV({
           ))}
         </select>
       </label>
+
+      {temOutrasListas && (
+        <label className="flex flex-col gap-1.5">
+          <span className="text-sm font-semibold text-ink">Lista de preço</span>
+          <select
+            value={listaAtualId}
+            onChange={(e) => aplicarLista(e.target.value)}
+            className="w-full min-h-[52px] rounded-xl border border-line bg-surface-2 px-4 text-base text-ink outline-none focus:border-accent appearance-none"
+          >
+            {listas.map((l) => (
+              <option key={l.id} value={l.id}>{l.nome}</option>
+            ))}
+          </select>
+          <span className="text-xs text-muted">
+            Preços de <b>{listaAtual?.nome ?? "Varejo"}</b>
+            {clienteId && listaAtualId !== listaDefaultId ? " (padrão do cliente)" : ""}
+          </span>
+        </label>
+      )}
 
       <CampoValor
         label="Desconto (opcional)"

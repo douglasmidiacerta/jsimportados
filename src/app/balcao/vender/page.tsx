@@ -2,16 +2,20 @@ import Link from "next/link";
 import { exigirPerfil } from "@/lib/perfil";
 import { listarProdutosPDV } from "@/lib/dados/vendas";
 import { listarClientes } from "@/lib/dados/clientes";
+import { listarListasPreco, obterListaDefault } from "@/lib/dados/listasPreco";
 import { BarraTopo } from "@/components/BarraTopo";
 import { PDV } from "@/components/vendas/PDV";
 import { registrarVendaAction } from "./actions";
 
 export default async function VenderPage() {
   const perfil = await exigirPerfil();
-  const [produtos, clientes] = await Promise.all([
+  const [produtos, clientes, listas, listaDefault] = await Promise.all([
     listarProdutosPDV(),
     listarClientes(),
+    listarListasPreco(),
+    obterListaDefault(),
   ]);
+  const listaDefaultId = listaDefault?.id ?? listas.find((l) => l.is_default)?.id ?? "";
 
   return (
     <>
@@ -36,6 +40,8 @@ export default async function VenderPage() {
           <PDV
             produtos={produtos}
             clientes={clientes}
+            listas={listas}
+            listaDefaultId={listaDefaultId}
             podeEditarPreco={perfil.papel === "gestao"}
             action={registrarVendaAction}
           />

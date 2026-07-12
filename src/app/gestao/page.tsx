@@ -67,7 +67,13 @@ const MODULOS: Modulo[] = [
     href: "/gestao/financeiro",
     pronto: true,
   },
-  { nome: "CRM & Preços", itens: "Histórico, listas de preço", fase: 7 },
+  {
+    nome: "CRM & Preços",
+    itens: "Histórico, carteira, aniversários, listas de preço",
+    fase: 7,
+    href: "/gestao/crm",
+    pronto: true,
+  },
   { nome: "Relatórios", itens: "Lucratividade, curvas ABC, DRE", fase: 8 },
 ];
 
@@ -133,9 +139,9 @@ export default async function GestaoPage() {
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 12 2 2 4-4" /><circle cx="12" cy="12" r="9" /></svg>
           </span>
           <p className="text-sm text-accent-ink">
-            <b>Financeiro no ar!</b> Contas a pagar (toda compra vira uma conta) e a
-            receber com baixa, o <b>Extrato</b> do que entrou e saiu, e a <b>DRE</b> com
-            o lucro do mês. Próximo passo: <b>CRM &amp; Preços</b>.
+            <b>CRM &amp; Preços no ar!</b> Listas de preço (o atacadista já sai com o
+            preço certo), carteira de clientes, aniversários e anotações/lembretes por
+            cliente. Próximo passo: <b>Relatórios</b> (curvas ABC, lucratividade).
           </p>
         </div>
 

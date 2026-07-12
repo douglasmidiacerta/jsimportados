@@ -1,7 +1,8 @@
 import { criarClienteServidor } from "@/lib/supabase/server";
 import type { Cliente } from "./tipos";
 
-const COLUNAS = "id, nome, telefone, documento, observacoes, ativo";
+const COLUNAS =
+  "id, nome, telefone, documento, observacoes, ativo, aniversario, lista_preco_id";
 
 /** Lista clientes (só ativos por padrão), ordenados por nome. */
 export async function listarClientes(

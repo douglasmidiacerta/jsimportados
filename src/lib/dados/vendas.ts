@@ -46,7 +46,7 @@ export async function listarProdutosPDV(busca?: string): Promise<ProdutoPDV[]> {
   let query = supabase
     .from("produtos")
     .select(
-      "id, nome, unidade, foto_path, estoque_atual, preco_venda, categorias(nome)",
+      "id, nome, unidade, foto_path, estoque_atual, preco_venda, categorias(nome), precos(lista_id, preco)",
     )
     .eq("ativo", true)
     .order("nome");
@@ -57,7 +57,10 @@ export async function listarProdutosPDV(busca?: string): Promise<ProdutoPDV[]> {
   return (data ?? []).map((r) => {
     const row = r as unknown as Record<string, unknown> & {
       categorias: { nome: string } | null;
+      precos: Array<{ lista_id: string; preco: number }> | null;
     };
+    const precos: Record<string, number> = {};
+    for (const pr of row.precos ?? []) precos[String(pr.lista_id)] = n(pr.preco);
     return {
       id: String(row.id),
       nome: String(row.nome),
@@ -66,6 +69,7 @@ export async function listarProdutosPDV(busca?: string): Promise<ProdutoPDV[]> {
       categoria_nome: row.categorias?.nome ?? null,
       estoque_atual: n(row.estoque_atual),
       preco_venda: n(row.preco_venda),
+      precos,
     };
   });
 }
@@ -144,6 +148,19 @@ export async function listarVendasGestao(): Promise<VendaGestao[]> {
       lucro_bruto: n(vc?.lucro_bruto),
     };
   });
+}
+
+/** Histórico de compras de um cliente (gestão), mais recentes primeiro. */
+export async function listarVendasDoCliente(clienteId: string): Promise<Venda[]> {
+  const supabase = await criarClienteServidor();
+  const { data, error } = await supabase
+    .from("vendas")
+    .select("*")
+    .eq("cliente_id", clienteId)
+    .order("data_venda", { ascending: false })
+    .order("criado_em", { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map((r) => normalizarVenda(r as Record<string, unknown>));
 }
 
 export type VendaGestaoDetalhe = VendaGestao & {
