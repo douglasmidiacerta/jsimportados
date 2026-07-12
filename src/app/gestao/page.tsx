@@ -74,7 +74,13 @@ const MODULOS: Modulo[] = [
     href: "/gestao/crm",
     pronto: true,
   },
-  { nome: "Relatórios", itens: "Lucratividade, curvas ABC, DRE", fase: 8 },
+  {
+    nome: "Relatórios",
+    itens: "Lucratividade, curvas ABC, vendas, em aberto",
+    fase: 8,
+    href: "/gestao/relatorios",
+    pronto: true,
+  },
 ];
 
 function CartaoModulo({ m }: { m: Modulo }) {
@@ -139,9 +145,9 @@ export default async function GestaoPage() {
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 12 2 2 4-4" /><circle cx="12" cy="12" r="9" /></svg>
           </span>
           <p className="text-sm text-accent-ink">
-            <b>CRM &amp; Preços no ar!</b> Listas de preço (o atacadista já sai com o
-            preço certo), carteira de clientes, aniversários e anotações/lembretes por
-            cliente. Próximo passo: <b>Relatórios</b> (curvas ABC, lucratividade).
+            <b>Relatórios no ar!</b> Lucratividade e curvas ABC (produtos, estoque,
+            clientes — por faturamento e por lucro), vendas por período, e o que está em
+            aberto com a auditoria de caixa. O sistema está completo — falta só o refino.
           </p>
         </div>
 

@@ -531,3 +531,66 @@ export type PrecoProdutoLista = {
   override: number | null; // preço específico da lista (null = herda Varejo)
   preco_efetivo: number;
 };
+
+// ======================== Fase 8: Relatórios ========================
+
+export type ProdutoLucro = {
+  produto_id: string;
+  nome: string;
+  quantidade: number;
+  faturamento: number;
+  custo: number;
+  lucro: number;
+  margem: number; // fração 0..1
+  custo_incompleto: boolean;
+};
+
+export type VendasResumo = {
+  n_vendas: number;
+  faturamento: number;
+  custo: number;
+  lucro: number;
+  desconto: number;
+  juros: number;
+  ticket_medio: number;
+  custo_completo: boolean;
+};
+
+export type VendaDia = {
+  dia: string;
+  n_vendas: number;
+  faturamento: number;
+  lucro: number;
+};
+
+export type VendaForma = {
+  forma: string;
+  n_vendas: number;
+  faturamento: number;
+  lucro: number;
+};
+
+export type EstoqueParado = {
+  produto_id: string;
+  nome: string;
+  estoque_atual: number;
+  custo: number | null;
+  valor_parado: number;
+  custo_ausente: boolean;
+};
+
+export type ClientePeriodo = {
+  cliente_id: string;
+  nome: string;
+  n_compras: number;
+  faturamento: number;
+  lucro: number;
+  ticket_medio: number;
+  custo_completo: boolean;
+};
+
+export type EmAbertoResumo = {
+  receber: { total: number; vencido: number; n: number; nVencidas: number };
+  pagar: { total: number; vencido: number; n: number; nVencidas: number };
+  saldo: number;
+};
