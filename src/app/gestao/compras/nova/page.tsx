@@ -9,7 +9,7 @@ import { registrarCompraAction } from "../actions";
 export default async function NovaCompraPage() {
   const perfil = await exigirGestao();
   const [fornecedores, produtos] = await Promise.all([
-    listarFornecedores(),
+    listarFornecedores(undefined, false, true),
     listarProdutos(),
   ]);
 

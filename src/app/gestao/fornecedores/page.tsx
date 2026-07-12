@@ -13,6 +13,7 @@ export default async function FornecedoresPage() {
     titulo: f.nome,
     subtitulo: [f.cidade, f.pais].filter(Boolean).join(" · ") || undefined,
     arquivado: !f.ativo,
+    badge: f.situacao === "bloqueado" ? "bloqueado" : undefined,
   }));
 
   return (

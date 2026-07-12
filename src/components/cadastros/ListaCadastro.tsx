@@ -10,6 +10,7 @@ export type ItemLista = {
   subtitulo?: string;
   extra?: string;
   arquivado?: boolean;
+  badge?: string; // marcador colorido (âmbar), ex.: "bloqueado"
 };
 
 /** Lista de cadastro com busca instantânea (client-side). Cada item vira link de edição. */
@@ -60,6 +61,11 @@ export function ListaCadastro({
                     {i.arquivado && (
                       <span className="text-[10px] font-mono uppercase tracking-wide px-1.5 py-0.5 rounded bg-surface-3 text-muted border border-line shrink-0">
                         arquivado
+                      </span>
+                    )}
+                    {i.badge && (
+                      <span className="text-[10px] font-mono uppercase tracking-wide px-1.5 py-0.5 rounded bg-[var(--amber-soft)] text-amber border border-[color:var(--amber)]/30 shrink-0">
+                        {i.badge}
                       </span>
                     )}
                   </span>

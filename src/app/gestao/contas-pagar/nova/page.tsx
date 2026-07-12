@@ -13,7 +13,7 @@ export default async function NovaDespesaPage() {
   const perfil = await exigirGestao();
   const [categorias, fornecedores] = await Promise.all([
     listarCategoriasDespesa(),
-    listarFornecedores(),
+    listarFornecedores(undefined, false, true),
   ]);
 
   return (

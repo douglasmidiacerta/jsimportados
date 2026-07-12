@@ -49,6 +49,66 @@ export type Fornecedor = {
   pais: string | null;
   observacoes: string | null;
   ativo: boolean;
+  // Fornecedor 2.0 (só-gestão)
+  tipo_pessoa: "fisica" | "juridica";
+  situacao: "geral" | "bloqueado";
+  razao_social: string | null;
+  nome_fantasia: string | null;
+  documento: string | null; // CNPJ ou CPF
+  celular: string | null;
+  email: string | null;
+  site: string | null;
+  eh_transportadora: boolean;
+};
+
+export type FornecedorEndereco = {
+  cep: string | null;
+  logradouro: string | null;
+  numero: string | null;
+  complemento: string | null;
+  bairro: string | null;
+  cidade: string | null;
+  uf: string | null;
+  exterior: boolean;
+};
+export type FornecedorContato = {
+  nome: string | null;
+  cargo: string | null;
+  telefone: string | null;
+  email: string | null;
+};
+export type FornecedorBanco = {
+  tipo: string | null;
+  banco: string | null;
+  agencia: string | null;
+  agencia_digito: string | null;
+  conta: string | null;
+  conta_digito: string | null;
+};
+export type FornecedorDocumento = {
+  tipo: string | null;
+  descricao: string | null;
+  arquivo_path: string;
+  tipo_arquivo: string | null; // 'image' | 'pdf'
+  url?: string | null; // link assinado (só na leitura)
+};
+
+/** Fornecedor com as coleções filhas (edição/detalhe). */
+export type FornecedorDetalhe = Fornecedor & {
+  enderecos: FornecedorEndereco[];
+  contatos: FornecedorContato[];
+  bancos: FornecedorBanco[];
+  documentos: FornecedorDocumento[];
+};
+
+/** Parcelas de um fornecedor agrupadas (financeiro por fornecedor). */
+export type ParcelasFornecedor = {
+  vencidas: ContaPagar[];
+  aVencer: ContaPagar[];
+  pagas: ContaPagar[];
+  totalVencidas: number;
+  totalAVencer: number;
+  totalPagas: number;
 };
 
 export type Cliente = {

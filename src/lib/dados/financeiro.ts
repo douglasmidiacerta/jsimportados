@@ -71,6 +71,7 @@ function mapContaPagar(
 export async function listarContasPagar(opts?: {
   status?: StatusContaPagar;
   tipo?: TipoContaPagar;
+  fornecedorId?: string;
 }): Promise<ContaPagar[]> {
   const supabase = await criarClienteServidor();
   let query = supabase
@@ -80,6 +81,8 @@ export async function listarContasPagar(opts?: {
     .order("vencimento");
   if (opts?.status) query = query.eq("status", opts.status);
   if (opts?.tipo) query = query.eq("tipo", opts.tipo);
+  // Filtro no servidor (evita trazer toda a base e truncar no cap do PostgREST).
+  if (opts?.fornecedorId) query = query.eq("fornecedor_id", opts.fornecedorId);
 
   const { data, error } = await query;
   if (error) throw error;
