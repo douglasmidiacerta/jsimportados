@@ -45,6 +45,22 @@ export async function baixarReceberAction(
   redirect(`/gestao/contas-receber/${contaId}`);
 }
 
+/**
+ * "Receber" direto na linha da grade (padrão FPQ): recebe o SALDO integral
+ * com a data de hoje (a RPC resolve os dois). Recebimento parcial ou com
+ * outra data continua na tela de detalhe.
+ */
+export async function receberLinhaAction(fd: FormData): Promise<void> {
+  await exigirGestao();
+  const contaId = String(fd.get("conta_id") ?? "");
+  const voltar = String(fd.get("voltar") ?? "/gestao/contas-receber");
+  if (!contaId) redirect(voltar);
+
+  const { error } = await baixarReceber(contaId, null, null, null);
+  revalidar();
+  redirect(error ? `${voltar}${voltar.includes("?") ? "&" : "?"}erro=${encodeURIComponent(traduzErro(error))}` : voltar);
+}
+
 export async function estornarRecebimentoAction(
   _prev: EstadoForm,
   fd: FormData,

@@ -46,9 +46,13 @@ function mapRecebimento(r: Record<string, unknown>): Recebimento {
   };
 }
 
-/** Lista contas a receber (gestão). Filtra por status se informado. */
+/**
+ * Lista contas a receber (gestão). Filtros no SERVIDOR (padrão FPQ): status,
+ * período de vencimento e cliente — evita trazer a base toda.
+ */
 export async function listarContasReceber(
   status?: "aberto" | "liquidado" | "cancelado",
+  opts?: { de?: string; ate?: string; clienteId?: string },
 ): Promise<ContaReceber[]> {
   const supabase = await criarClienteServidor();
   let query = supabase
@@ -56,6 +60,9 @@ export async function listarContasReceber(
     .select("*, clientes(nome)")
     .order("vencimento");
   if (status) query = query.eq("status", status);
+  if (opts?.de) query = query.gte("vencimento", opts.de);
+  if (opts?.ate) query = query.lte("vencimento", opts.ate);
+  if (opts?.clienteId) query = query.eq("cliente_id", opts.clienteId);
 
   const { data, error } = await query;
   if (error) throw error;

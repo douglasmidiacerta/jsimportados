@@ -120,6 +120,11 @@ h1, h2, h3 {
   }
 }
 
+/* Cores de linha nas grades (padrão FPQ): estado legível de relance. */
+.linha-verde   { background: color-mix(in srgb, var(--good) 10%, transparent); }
+.linha-amarela { background: color-mix(in srgb, var(--amber) 14%, transparent); }
+.linha-vermelha{ background: color-mix(in srgb, var(--danger) 11%, transparent); }
+
 /* ============================================================
    Modo Gestão no DESKTOP: o conteúdo encosta no menu lateral em vez de
    flutuar no centro (o que deixava um vazão ao lado da sidebar).
