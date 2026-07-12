@@ -8,8 +8,8 @@
  */
 export const SUPABASE_URL =
   process.env.NEXT_PUBLIC_SUPABASE_URL ??
-  "https://iuzemkdubvmyvdbprjpp.supabase.co";
+  "https://hpdpgvqxalxjywgizrxt.supabase.co";
 
 export const SUPABASE_ANON_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
-  "sb_publishable_Qt9MIUmGmFG6-nqfV4AfOw_4p9yuZ-x";
+  "sb_publishable_ltaNA7nnVozoSCOcZIjg";
