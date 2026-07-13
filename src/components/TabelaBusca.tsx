@@ -26,12 +26,14 @@ export function TabelaBusca({
   placeholder = "Pesquisar…",
   vazio = "Nada cadastrado ainda.",
   legenda,
+  rodape,
 }: {
   colunas: ColunaBusca[];
   linhas: LinhaBusca[];
   placeholder?: string;
   vazio?: string;
   legenda?: { cor: "verde" | "amarela" | "vermelha"; rotulo: string }[];
+  rodape?: (string | null)[]; // totais (mesmo nº de colunas)
 }) {
   const [busca, setBusca] = useState("");
 
@@ -116,6 +118,20 @@ export function TabelaBusca({
                 ))
               )}
             </tbody>
+            {rodape && (
+              <tfoot>
+                <tr className="border-t-2 border-line bg-surface-2">
+                  {rodape.map((cel, i) => (
+                    <td
+                      key={i}
+                      className={`px-3 py-2.5 font-semibold text-ink tabular-nums whitespace-nowrap ${colunas[i]?.alinhar === "dir" ? "text-right" : ""}`}
+                    >
+                      {cel ?? ""}
+                    </td>
+                  ))}
+                </tr>
+              </tfoot>
+            )}
           </table>
         </div>
         {legenda && legenda.length > 0 && (
