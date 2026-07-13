@@ -13,6 +13,8 @@ import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
 const AREAS = [
   { nome: "Contas a pagar", desc: "Compras e despesas, com baixa e estorno", href: "/gestao/contas-pagar" },
   { nome: "Contas a receber", desc: "Cartão e fiado — dar baixa quando cair", href: "/gestao/contas-receber" },
+  { nome: "Resultado geral", desc: "O que sobrou no período, despesas por categoria", href: "/gestao/resultado" },
+  { nome: "Plano de contas", desc: "Categorias de despesa do financeiro", href: "/gestao/plano-contas" },
   { nome: "Fluxo de caixa", desc: "Entradas e saídas por conta, no período", href: "/gestao/fluxo-caixa" },
   { nome: "Extrato", desc: "O que entrou e saiu (regime de caixa)", href: "/gestao/extrato" },
   { nome: "DRE gerencial", desc: "Resultado por mês (receita, CMV, despesas)", href: "/gestao/dre" },
