@@ -57,10 +57,12 @@
 | /gestao/recibos (+novo, [id]) | recibo numerado, valor por extenso, imprimir | ⏳ LEVA F |
 | /gestao/extrato (+config) | movimento c/ saldo corrente + rodapé de totais | ✔ + ⏳ LEVA A |
 | /gestao/dre | DRE mensal | ✔ |
-| /gestao/contas-bancarias (+nova, [id]) | contas (dinheiro/banco/maquininha) c/ saldo | ⏳ ONDA 2 |
-| /gestao/transferencias | transferência entre contas | ⏳ ONDA 2 |
-| /gestao/conciliacao | conciliação bancária (OFX/CSV) | ⏳ ONDA 2 |
-| /gestao/fluxo-caixa | fluxo por período e conta (modelo MarketUp) | ⏳ ONDA 2 |
+| /gestao/contas (+nova, [id]) | contas (banco/adquirente) c/ saldo do ledger + extrato + ajuste | ✔ ONDA 2 (0015) |
+| /gestao/maquininhas (+nova, [id]) | maquininhas + taxas MDR próprias | ✔ ONDA 2 (0015) |
+| /gestao/transferencias | transferência entre contas (2 lançamentos) | ✔ ONDA 2 (0015) |
+| /gestao/caixa/[id] · conferência 3 pontas | dinheiro × Pix × cartão por maquininha | ✔ ONDA 2 (0015) |
+| /gestao/conciliacao | conciliação bancária (OFX/CSV) | ⏳ ONDA 2 (0016) |
+| /gestao/fluxo-caixa | fluxo por período e conta (modelo MarketUp) | ⏳ ONDA 2 (0016) |
 
 ## Gestão — Relatórios
 | Rota | Função | Status |
