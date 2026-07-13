@@ -1,6 +1,6 @@
 import { exigirGestao } from "@/lib/perfil";
 import { listarClientes } from "@/lib/dados/clientes";
-import { formatarData } from "@/lib/formato";
+import { formatarData, formatarBRL } from "@/lib/formato";
 import { BarraTopo } from "@/components/BarraTopo";
 import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
 import { ListaCadastro, type ItemLista } from "@/components/cadastros/ListaCadastro";
@@ -21,12 +21,13 @@ export default async function ClientesPage() {
     id: c.id,
     href: `/gestao/clientes/${c.id}`,
     arquivado: !c.ativo,
+    cor: c.situacao === "bloqueado" ? ("vermelha" as const) : undefined,
     celulas: [
-      c.nome,
+      c.situacao === "bloqueado" ? `🚫 ${c.nome}` : c.nome,
       c.telefone,
-      c.documento,
+      (c.saldo_devedor ?? 0) > 0 ? formatarBRL(c.saldo_devedor ?? 0) : "—",
+      c.limite_credito != null ? formatarBRL(c.limite_credito) : "—",
       c.aniversario ? formatarData(c.aniversario) : null,
-      c.observacoes ? "📝" : null,
     ],
   }));
 
@@ -54,11 +55,12 @@ export default async function ClientesPage() {
             colunas={[
               { titulo: "Cliente" },
               { titulo: "Telefone" },
-              { titulo: "Documento" },
+              { titulo: "Deve (fiado)", alinhar: "dir" },
+              { titulo: "Limite", alinhar: "dir" },
               { titulo: "Aniversário" },
-              { titulo: "Obs." },
             ]}
             linhas={linhas}
+            legenda={[{ cor: "vermelha", rotulo: "Bloqueado para fiado" }]}
             placeholder="Pesquisar cliente…"
             vazio="Nenhum cliente cadastrado ainda."
           />

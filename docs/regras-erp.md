@@ -45,7 +45,7 @@
 | F2 | Fechamento com **divergência** não exige justificativa | falta/sobra some sem explicação | diferença ≠ 0 → observação obrigatória + relatório de divergências | ONDA 1 |
 | F3 | Operação pode dar **qualquer desconto** no PDV | desconto vira vazamento de margem | teto de desconto p/ operação (decisão do dono), validado na RPC | ONDA 1 |
 | F4 | **Cancelar/devolver não existe** | erro vira sujeira permanente | Onda 1 (já projetada: D1 parcial+total, D2 revendável/perda, D3 operação só a própria do dia c/ caixa aberto) | ONDA 1 |
-| F5 | Fiado sem **limite de crédito** e cliente sem status bloqueado | fiado sem teto p/ mau pagador | limite de crédito + bloqueio do cliente travando fiado na RPC | LEVA D |
+| F5 | ~~Fiado sem limite de crédito e cliente sem status bloqueado~~ | fiado sem teto p/ mau pagador | ✔ FEITO (0019): cliente bloqueado não faz fiado; limite_credito trava por trigger em contas_receber (saldo devedor + venda <= limite) | LEVA D |
 | F6 | **Mudança de preço/custo não deixa rastro** | não dá pra responder "quem mudou e quando" | trilha de auditoria (log imutável de alterações sensíveis) | ONDA 1 |
 | F7 | Ajuste de estoque **sem motivo** obrigatório | perdas/quebras viram nº solto | ajuste manual exige motivo (perda, quebra, inventário…) + relatório Perdas | ONDA 1 |
 | F8 | Documentos **sem número amigável** | rastreio por telefone impossível | V-000123 / C-000045 / O-000012 / R-000007 | LEVA B |

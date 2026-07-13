@@ -4,10 +4,13 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import { exigirPerfil, exigirGestao } from "@/lib/perfil";
+import { parseMoedaBR } from "@/lib/formato";
 import type { EstadoForm } from "@/lib/dados/tipos";
 
 function lerCampos(fd: FormData) {
   const opt = (k: string) => (String(fd.get(k) ?? "").trim() || null);
+  const limiteTxt = String(fd.get("limite_credito") ?? "").trim();
+  const uf = opt("uf");
   return {
     nome: String(fd.get("nome") ?? "").trim(),
     telefone: opt("telefone"),
@@ -15,6 +18,17 @@ function lerCampos(fd: FormData) {
     observacoes: opt("observacoes"),
     aniversario: opt("aniversario"), // Fase 7 (YYYY-MM-DD ou null)
     lista_preco_id: opt("lista_preco_id"), // Fase 7 (uuid ou null = Varejo)
+    // Leva D — Cliente 2.0
+    email: opt("email"),
+    cep: opt("cep"),
+    logradouro: opt("logradouro"),
+    numero: opt("numero"),
+    complemento: opt("complemento"),
+    bairro: opt("bairro"),
+    cidade: opt("cidade"),
+    uf: uf && /^[A-Za-z]{2}$/.test(uf) ? uf.toUpperCase() : null,
+    limite_credito: limiteTxt ? parseMoedaBR(limiteTxt) : null,
+    situacao: String(fd.get("bloqueado") ?? "") === "true" ? "bloqueado" : "geral",
   };
 }
 

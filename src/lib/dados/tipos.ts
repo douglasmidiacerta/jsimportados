@@ -125,6 +125,18 @@ export type Cliente = {
   ativo: boolean;
   aniversario: string | null; // Fase 7 (YYYY-MM-DD)
   lista_preco_id: string | null; // Fase 7: lista de preço padrão do cliente
+  // Leva D — Cliente 2.0
+  email: string | null;
+  cep: string | null;
+  logradouro: string | null;
+  numero: string | null;
+  complemento: string | null;
+  bairro: string | null;
+  cidade: string | null;
+  uf: string | null;
+  limite_credito: number | null; // null = sem limite
+  situacao: "geral" | "bloqueado";
+  saldo_devedor?: number; // fiado em aberto (view; só quando carregado)
 };
 
 /** Estado retornado pelas Server Actions de formulário. */
