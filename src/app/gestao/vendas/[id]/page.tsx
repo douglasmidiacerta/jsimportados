@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { exigirGestao } from "@/lib/perfil";
 import { obterVendaGestao, devolvidoPorItem } from "@/lib/dados/vendas";
@@ -45,6 +46,16 @@ export default async function VendaGestaoDetalhePage({
           descricao={`${formatarData(venda.data_venda)} · ${rotuloForma(venda.forma_pagamento)}${venda.cliente_nome ? ` · ${venda.cliente_nome}` : ""}`}
           voltarHref="/gestao/vendas"
         />
+
+        <div className="mb-5">
+          <Link
+            href={`/gestao/vendas/${venda.id}/recibo`}
+            className="inline-flex items-center gap-2 h-10 rounded-xl border border-line px-4 text-sm font-semibold text-ink hover:bg-surface-2 transition-colors"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9V2h12v7" /><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" /><path d="M6 14h12v8H6z" /></svg>
+            Recibo / imprimir
+          </Link>
+        </div>
 
         {venda.status === "cancelada" && (
           <p className="mb-4 text-sm font-semibold text-danger bg-[var(--danger)]/10 border border-[var(--danger)]/30 rounded-xl px-4 py-3">
