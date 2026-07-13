@@ -5,6 +5,7 @@ import { formatarBRL, formatarData } from "@/lib/formato";
 import { BarraTopo } from "@/components/BarraTopo";
 import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
 import { FiltroPeriodo, BarraProporcional, AvisoCustoIncompleto, resolverPeriodo } from "../_ui";
+import { ExportarCSV } from "@/components/ExportarCSV";
 
 const FORMA_ROTULO: Record<string, string> = {
   dinheiro: "Dinheiro",
@@ -56,7 +57,15 @@ export default async function RelVendasPage({
         ) : (
           <>
             <section className="mb-6">
-              <h2 className="text-sm font-bold text-ink uppercase tracking-wide mb-2">Por dia</h2>
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <h2 className="text-sm font-bold text-ink uppercase tracking-wide">Por dia</h2>
+                <ExportarCSV
+                  nomeArquivo={`vendas_${de}_a_${ate}`}
+                  colunas={["Data", "Faturamento", "Lucro"]}
+                  linhas={porDia.map((d) => [d.dia, d.faturamento, d.lucro])}
+                  rotulo="CSV"
+                />
+              </div>
               <div className="flex flex-col gap-2">
                 {porDia.map((d) => (
                   <div key={d.dia}>

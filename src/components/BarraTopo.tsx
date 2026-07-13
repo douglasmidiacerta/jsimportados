@@ -15,7 +15,7 @@ export function BarraTopo({
 
   return (
     <header
-      className={`sticky top-0 z-10 border-b border-line bg-surface/90 backdrop-blur ${
+      className={`nao-imprimir sticky top-0 z-10 border-b border-line bg-surface/90 backdrop-blur ${
         area === "gestao" ? "lg:hidden" : ""
       }`}
     >

@@ -143,3 +143,11 @@ h1, h2, h3 {
     padding-right: 2rem;
   }
 }
+
+/* ===== Impressão (Leva F): esconde navegação, quebra por via ===== */
+@media print {
+  .nao-imprimir { display: none !important; }
+  body { background: #fff; }
+  .recibo-via { page-break-after: always; border: none !important; }
+  .recibo-via:last-child { page-break-after: auto; }
+}

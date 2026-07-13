@@ -49,7 +49,7 @@ export function SidebarGestao({ nome }: { nome: string }) {
       : casa(item.href) || (item.extras ?? []).some(casa);
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 shrink-0 border-r border-line bg-surface sticky top-0 h-screen">
+    <aside className="nao-imprimir hidden lg:flex flex-col w-64 shrink-0 border-r border-line bg-surface sticky top-0 h-screen">
       <div className="px-5 h-16 flex items-center gap-2.5 border-b border-line shrink-0">
         <span className="w-9 h-9 rounded-lg bg-accent text-white grid place-items-center text-sm font-extrabold tracking-tight">
           JS
