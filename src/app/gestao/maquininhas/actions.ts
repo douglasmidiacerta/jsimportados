@@ -3,7 +3,6 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { exigirGestao } from "@/lib/perfil";
-import { parseMoedaBR } from "@/lib/formato";
 import { salvarMaquininha, upsertTaxasMaquininha } from "@/lib/dados/maquininhas";
 import type { EstadoForm } from "@/lib/dados/tipos";
 
@@ -19,7 +18,11 @@ function traduz(msg: string | undefined): string {
   return "Não deu para salvar. Confira os dados e tente de novo.";
 }
 
-/** Lê a tabela de taxas (JSON do campo oculto), ignorando linhas vazias/zeradas. */
+/**
+ * Lê a tabela de taxas (JSON do campo oculto). O cliente JÁ converteu os
+ * números (parseMoedaBR no FormularioMaquininha), então aqui NÃO reparseamos —
+ * reparsear "2.5" trataria o ponto como milhar e viraria 25. Só validamos.
+ */
 function lerTaxas(fd: FormData) {
   try {
     const arr = JSON.parse(String(fd.get("taxas") ?? "[]"));
@@ -28,7 +31,7 @@ function lerTaxas(fd: FormData) {
       .map((t) => ({
         modalidade: t.modalidade as "debito" | "credito",
         parcelas: Math.max(1, Math.floor(Number(t.parcelas) || 1)),
-        percentual: parseMoedaBR(String(t.percentual ?? "")),
+        percentual: Number(t.percentual) || 0,
         prazo_dias: Math.max(0, Math.floor(Number(t.prazo_dias) || 0)),
         ativo: true,
       }))

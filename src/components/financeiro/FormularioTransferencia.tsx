@@ -59,6 +59,7 @@ export function FormularioTransferencia({
         </select>
       </label>
 
+      <input type="hidden" name="valor" value={valor} />
       <CampoValor label="Valor" value={valor} onChange={setValor} simbolo="R$" placeholder="0,00" />
 
       <label className="flex flex-col gap-1.5">
