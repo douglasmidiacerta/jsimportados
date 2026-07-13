@@ -7,6 +7,7 @@ import {
   FORMAS_PAGAMENTO,
   MAX_PARCELAS,
   type FormaPagamento,
+  type Maquininha,
 } from "@/lib/dados/tipos";
 
 const ICON: Record<FormaPagamento, React.ReactNode> = {
@@ -34,6 +35,9 @@ export function SeletorPagamento({
   juros,
   onJuros,
   total,
+  maquininhas = [],
+  maquininhaId,
+  onMaquininha,
 }: {
   forma: FormaPagamento | null;
   onForma: (f: FormaPagamento) => void;
@@ -44,6 +48,9 @@ export function SeletorPagamento({
   juros: string;
   onJuros: (v: string) => void;
   total: number;
+  maquininhas?: Maquininha[];
+  maquininhaId?: string;
+  onMaquininha?: (id: string) => void;
 }) {
   const nParcelas = modalidade === "debito" ? 1 : parcelas;
   const valorParcela = parcelasBrutas(total, nParcelas)[0] ?? 0;
@@ -74,6 +81,31 @@ export function SeletorPagamento({
 
       {forma === "cartao" && (
         <div className="rounded-2xl border border-line bg-surface p-4 flex flex-col gap-3">
+          {maquininhas.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <span className="text-sm font-semibold text-ink">Qual maquininha passou?</span>
+              <div className="grid grid-cols-2 gap-2">
+                {maquininhas.map((mq) => (
+                  <button
+                    key={mq.id}
+                    type="button"
+                    onClick={() => onMaquininha?.(mq.id)}
+                    className={`min-h-[48px] rounded-xl border font-semibold text-sm px-3 transition-colors ${
+                      maquininhaId === mq.id
+                        ? "bg-accent text-white border-accent"
+                        : "bg-surface-2 text-ink border-line"
+                    }`}
+                  >
+                    {mq.nome}
+                  </button>
+                ))}
+              </div>
+              {!maquininhaId && (
+                <span className="text-xs text-amber">Escolha a maquininha para finalizar.</span>
+              )}
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-2">
             {(["debito", "credito"] as const).map((m) => (
               <button

@@ -4,18 +4,20 @@ import { listarProdutosPDV } from "@/lib/dados/vendas";
 import { listarClientes } from "@/lib/dados/clientes";
 import { listarListasPreco, obterListaDefault } from "@/lib/dados/listasPreco";
 import { obterCaixaAberto } from "@/lib/dados/caixa";
+import { listarMaquininhasAtivas } from "@/lib/dados/maquininhas";
 import { BarraTopo } from "@/components/BarraTopo";
 import { PDV } from "@/components/vendas/PDV";
 import { registrarVendaAction } from "./actions";
 
 export default async function VenderPage() {
   const perfil = await exigirPerfil();
-  const [produtos, clientes, listas, listaDefault, caixa] = await Promise.all([
+  const [produtos, clientes, listas, listaDefault, caixa, maquininhas] = await Promise.all([
     listarProdutosPDV(),
     listarClientes(),
     listarListasPreco(),
     obterListaDefault(),
     obterCaixaAberto(),
+    listarMaquininhasAtivas(),
   ]);
 
   // Regra do ERP: toda venda exige caixa aberto (travado no banco pela 0014).
@@ -75,6 +77,7 @@ export default async function VenderPage() {
             listas={listas}
             listaDefaultId={listaDefaultId}
             podeEditarPreco={perfil.papel === "gestao"}
+            maquininhas={maquininhas}
             action={registrarVendaAction}
           />
         )}

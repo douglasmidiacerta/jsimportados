@@ -21,6 +21,7 @@ import {
   type FormaPagamento,
   type VendaPayload,
   type EstadoForm,
+  type Maquininha,
 } from "@/lib/dados/tipos";
 
 type Acao = (prev: EstadoForm, fd: FormData) => Promise<EstadoForm>;
@@ -40,6 +41,7 @@ export function PDV({
   listas,
   listaDefaultId,
   podeEditarPreco,
+  maquininhas = [],
   action,
 }: {
   produtos: ProdutoPDV[];
@@ -47,6 +49,7 @@ export function PDV({
   listas: ListaPreco[];
   listaDefaultId: string;
   podeEditarPreco: boolean;
+  maquininhas?: Maquininha[];
   action: Acao;
 }) {
   const [estado, formAction, enviando] = useActionState(action, {});
@@ -60,6 +63,7 @@ export function PDV({
   const [modalidade, setModalidade] = useState<"debito" | "credito">("credito");
   const [parcelas, setParcelas] = useState(1);
   const [juros, setJuros] = useState("");
+  const [maquininhaId, setMaquininhaId] = useState("");
 
   const listaAtual = listas.find((l) => l.id === listaAtualId);
   const temOutrasListas = listas.length > 1;
@@ -177,7 +181,11 @@ export function PDV({
     })),
     cartao:
       forma === "cartao"
-        ? { modalidade, parcelas: modalidade === "debito" ? 1 : parcelas }
+        ? {
+            modalidade,
+            parcelas: modalidade === "debito" ? 1 : parcelas,
+            maquininha_id: maquininhas.length > 0 ? maquininhaId || null : null,
+          }
         : undefined,
     fiado:
       forma === "fiado"
@@ -189,10 +197,14 @@ export function PDV({
     (c) => c.produto.estoque_atual - qtdNum(c) < 0,
   );
   const todasQtdValidas = carrinho.every((c) => qtdNum(c) > 0);
+  // cartão exige maquininha quando houver alguma cadastrada (espelha a trava do banco)
+  const maquininhaOk =
+    forma !== "cartao" || maquininhas.length === 0 || maquininhaId !== "";
   const podeFinalizar =
     carrinho.length > 0 &&
     todasQtdValidas &&
     forma !== null &&
+    maquininhaOk &&
     (forma !== "fiado" || clienteId !== "");
 
   // ---------- PASSO MONTAR ----------
@@ -407,6 +419,9 @@ export function PDV({
         juros={juros}
         onJuros={setJuros}
         total={total}
+        maquininhas={maquininhas}
+        maquininhaId={maquininhaId}
+        onMaquininha={setMaquininhaId}
       />
 
       {temEstoqueNegativo && (
@@ -437,7 +452,9 @@ export function PDV({
                   ? "Confira a quantidade dos itens."
                   : !forma
                     ? "Escolha a forma de pagamento."
-                    : "Escolha o cliente (venda fiado)."}
+                    : !maquininhaOk
+                      ? "Escolha a maquininha que passou o cartão."
+                      : "Escolha o cliente (venda fiado)."}
             </p>
           )}
         </div>

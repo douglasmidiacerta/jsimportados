@@ -53,10 +53,18 @@ const CARTOES: Cartao[] = [
   },
   {
     titulo: "Taxas do cartão",
-    descricao: "MDR por parcela (débito e crédito)",
+    descricao: "MDR por parcela (padrão do sistema)",
     href: "/gestao/taxas-cartao",
     icone: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></svg>
+    ),
+  },
+  {
+    titulo: "Maquininhas",
+    descricao: "Máquinas de cartão e suas taxas",
+    href: "/gestao/maquininhas",
+    icone: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" /><path d="M9 6h6M9 10h6M12 18h.01" /></svg>
     ),
   },
 ];

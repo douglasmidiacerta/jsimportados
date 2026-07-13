@@ -279,7 +279,11 @@ export type VendaPayload = {
   desconto: number;
   observacoes: string | null;
   itens: ItemVendaInput[];
-  cartao?: { modalidade: "debito" | "credito"; parcelas: number };
+  cartao?: {
+    modalidade: "debito" | "credito";
+    parcelas: number;
+    maquininha_id?: string | null;
+  };
   fiado?: { juros: number; prazo_dias: number; vencimento: string | null };
 };
 
@@ -671,4 +675,98 @@ export type EmAbertoResumo = {
   receber: { total: number; vencido: number; n: number; nVencidas: number };
   pagar: { total: number; vencido: number; n: number; nVencidas: number };
   saldo: number;
+};
+
+// ===================== Onda 2: contas e maquininhas =====================
+
+export type Maquininha = {
+  id: string;
+  nome: string;
+  adquirente: string | null;
+  observacoes: string | null;
+  ativo: boolean;
+};
+
+export type MaquininhaTaxa = {
+  maquininha_id: string;
+  modalidade: "debito" | "credito";
+  parcelas: number;
+  percentual: number;
+  prazo_dias: number;
+  ativo: boolean;
+};
+
+export type TipoContaFin = "banco" | "adquirente" | "outro";
+
+export type ContaFinanceira = {
+  id: string;
+  nome: string;
+  tipo: TipoContaFin;
+  banco: string | null;
+  agencia: string | null;
+  numero_conta: string | null;
+  chave_pix: string | null;
+  maquininha_id: string | null;
+  recebe_pix: boolean;
+  saldo_inicial: number;
+  data_inicial: string;
+  observacoes: string | null;
+  ativo: boolean;
+};
+
+/** Conta com o saldo derivado (vw_contas_saldo). */
+export type ContaSaldo = {
+  id: string;
+  nome: string;
+  tipo: TipoContaFin;
+  banco: string | null;
+  recebe_pix: boolean;
+  maquininha_id: string | null;
+  ativo: boolean;
+  saldo: number;
+  n_lancamentos: number;
+  pendentes_conciliar: number;
+};
+
+export type OrigemLancamento =
+  | "saldo_inicial"
+  | "venda_pix"
+  | "recebimento"
+  | "pagamento"
+  | "transferencia"
+  | "ajuste";
+
+export type LancamentoFinanceiro = {
+  id: string;
+  conta_id: string;
+  data: string;
+  valor: number; // assinado
+  origem: OrigemLancamento;
+  descricao: string | null;
+  conciliado: boolean;
+  criado_em: string;
+};
+
+/** Uma ponta "cartão" da conferência (por maquininha). */
+export type ConfCartaoMaquininha = {
+  maquininha: string;
+  vendas: number;
+  bruto: number;
+  taxa: number;
+  liquido: number;
+  recebido: number;
+  parcelas_abertas: number;
+};
+
+/** Retorno de conferencia_sessao — as 3 pontas de uma sessão de caixa. */
+export type ConferenciaSessao = {
+  dinheiro: {
+    esperado: number | null;
+    contado: number | null;
+    diferenca: number | null;
+    justificativa: string | null;
+    status: string;
+  };
+  pix: { vendido: number; lancado_na_conta: number; conta: string | null };
+  cartao: ConfCartaoMaquininha[];
 };
