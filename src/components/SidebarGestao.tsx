@@ -22,12 +22,13 @@ const ic = (d: string) => (
 
 const MENU: Item[] = [
   { nome: "Painel", href: "/gestao", exato: true, icone: ic("M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z|M9 22V12h6v10") },
-  { nome: "Cadastros", href: "/gestao/cadastros", extras: ["/gestao/produtos", "/gestao/categorias", "/gestao/fornecedores", "/gestao/clientes", "/gestao/listas-preco", "/gestao/taxas-cartao"], icone: ic("M20 7 12 3 4 7v10l8 4 8-4Z|M4 7l8 4 8-4|M12 21V11") },
+  { nome: "Cadastros", href: "/gestao/cadastros", extras: ["/gestao/produtos", "/gestao/categorias", "/gestao/fornecedores", "/gestao/clientes", "/gestao/listas-preco", "/gestao/taxas-cartao", "/gestao/maquininhas"], icone: ic("M20 7 12 3 4 7v10l8 4 8-4Z|M4 7l8 4 8-4|M12 21V11") },
   { nome: "Compras", href: "/gestao/compras", icone: ic("M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z|M3 6h18|M16 10a4 4 0 0 1-8 0") },
   { nome: "Estoque", href: "/gestao/estoque", icone: ic("M3 7h18v13H3z|M3 7l2-4h14l2 4|M9 12h6") },
   { nome: "Vendas", href: "/gestao/vendas", icone: ic("M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z|M3 6h18|M16 10a4 4 0 0 1-8 0") },
   { nome: "Contas a receber", href: "/gestao/contas-receber", icone: ic("M12 1v22|M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6") },
   { nome: "Caixa", href: "/gestao/caixa", icone: ic("M2 7h20v12H2z|M2 7l3-4h14l3 4|M16 13h2") },
+  { nome: "Contas", href: "/gestao/contas", extras: ["/gestao/transferencias"], icone: ic("M3 10h18|M5 6h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z|M7 15h4") },
   { nome: "Financeiro", href: "/gestao/financeiro", icone: ic("M3 3v18h18|M7 14l4-4 3 3 5-6") },
   { nome: "CRM & Preços", href: "/gestao/crm", icone: ic("M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2|M9 7a4 4 0 1 1 0 .01|M22 21v-2a4 4 0 0 0-3-3.87") },
   { nome: "Relatórios", href: "/gestao/relatorios", icone: ic("M4 4v16h16|M8 16V10|M12 16V6|M16 16v-4") },

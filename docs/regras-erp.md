@@ -94,5 +94,28 @@ extrato (regime caixa) + DRE (competência). Cada elo guarda `criado_por` +
   pontas 2 e 3 exigem cadastro de contas bancárias e maquininhas → Onda 2, com
   tela de fechamento/conferência em 3 colunas (dinheiro · Pix · cartão).
 
+## 6. Onda 2 — conciliação (migration 0015, aplicada 13/07/2026)
+- **Maquininhas** com MDR próprio; `taxas_cartao` (Fase 4) vira fallback.
+- **Venda no cartão EXIGE maquininha** quando houver alguma ativa cadastrada
+  (trava na RPC `registrar_venda` v3); grava `vendas.maquininha_id`.
+- **Contas financeiras** (banco/adquirente): saldo = SOMA do ledger
+  (`lancamentos_financeiros`), nunca editável. `saldo_inicial` imutável
+  (acerto = ajuste justificado). Lançamento **imutável** (só a conciliação
+  muda; DELETE bloqueado) — mesma regra de ouro dos outros ledgers.
+- **Integração automática por trigger** (não recria RPCs): venda Pix → conta
+  `recebe_pix` (máx. 1 conta); recebimento/pagamento não-dinheiro → conta
+  padrão (`financeiro_config.conta_padrao_id`); estorno = espelho negativo.
+  Dinheiro NÃO vira banco automático — só por **transferência** (depósito).
+- **Transferência** atômica = 2 lançamentos (RPC `transferir_entre_contas`);
+  transferência e ledger imutáveis (correção = inversa).
+- **`conferencia_sessao(uuid)`**: as 3 pontas de uma sessão — dinheiro
+  (esperado×contado×dif) · Pix (vendido×lançado na conta) · cartão por
+  maquininha (bruto→taxa→líquido→recebido).
+- RLS: financeiro **só-gestão**; `maquininhas` visível à operação (o PDV lista).
+- Bug de fuso eliminado na fonte: `registrar_venda` agora usa `hoje_brt()`
+  internamente (não só o DEFAULT da coluna).
+- **Compatibilidade**: sem maquininha/contas cadastradas, tudo se comporta como
+  antes — a trava do cartão só liga ao cadastrar a 1ª maquininha.
+
 > Este arquivo é o contrato de regras. Toda leva/onda que criar trava nova
 > ATUALIZA este documento (com o nº da migration que a implementou).

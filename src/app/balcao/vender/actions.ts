@@ -16,6 +16,8 @@ function traduzErro(error: { message?: string } | null): string {
       ? `Sem estoque de "${m[1]}" (restam ${m[2]}). Ajuste a quantidade.`
       : "Produto sem estoque suficiente. Ajuste a quantidade.";
   }
+  if (/[Ee]scolha a maquininha|[Mm]aquininha invalida/.test(msg))
+    return "Escolha a maquininha que passou o cartão.";
   if (/[Tt]axa de cartao/.test(msg))
     return "Configure as taxas do cartão (Gestão → Taxas do cartão) antes de vender no cartão.";
   if (/fiado exige um cliente/.test(msg))

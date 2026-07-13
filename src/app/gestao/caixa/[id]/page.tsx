@@ -5,9 +5,11 @@ import {
   listarMovimentos,
   totaisAReceberDaSessao,
 } from "@/lib/dados/caixa";
+import { conferenciaSessao } from "@/lib/dados/contasFinanceiras";
 import { formatarBRL, formatarData } from "@/lib/formato";
 import { BarraTopo } from "@/components/BarraTopo";
 import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
+import { ConferenciaTresPontas } from "@/components/financeiro/ConferenciaTresPontas";
 import type { CaixaMovimento } from "@/lib/dados/tipos";
 
 function rotuloMov(m: CaixaMovimento): string {
@@ -27,9 +29,10 @@ export default async function CaixaDetalhePage({
   const sessao = await obterSessaoResumo(id);
   if (!sessao) notFound();
 
-  const [movimentos, aReceber] = await Promise.all([
+  const [movimentos, aReceber, conf] = await Promise.all([
     listarMovimentos(id),
     totaisAReceberDaSessao(id),
+    conferenciaSessao(id),
   ]);
 
   const fechado = sessao.status === "fechado";
@@ -38,7 +41,7 @@ export default async function CaixaDetalhePage({
   return (
     <>
       <BarraTopo nome={perfil.nome} papel={perfil.papel} area="gestao" />
-      <main className="mx-auto max-w-3xl w-full px-4 py-6 sm:py-10 flex-1">
+      <main className="mx-auto max-w-3xl lg:max-w-5xl w-full px-4 py-6 sm:py-10 flex-1">
         <CabecalhoCadastro
           titulo={`Caixa de ${formatarData(sessao.aberto_em.slice(0, 10))}`}
           descricao={fechado ? "Fechado" : "Aberto"}
@@ -85,11 +88,14 @@ export default async function CaixaDetalhePage({
         </div>
 
         {/* Outros meios do dia */}
-        <div className="grid grid-cols-3 gap-3 mb-5">
+        <div className="grid grid-cols-3 gap-3 mb-8">
           <Mini titulo="Pix" valor={formatarBRL(sessao.vendas_pix)} />
           <Mini titulo="Cartão" valor={formatarBRL(aReceber.cartao)} />
           <Mini titulo="Fiado" valor={formatarBRL(aReceber.fiado)} />
         </div>
+
+        {/* Conferência em 3 pontas (Onda 2) */}
+        {conf && <ConferenciaTresPontas conf={conf} />}
 
         {/* Extrato */}
         <h2 className="text-lg font-bold text-ink tracking-tight mb-2">Movimentos</h2>
