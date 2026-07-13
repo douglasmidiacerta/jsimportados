@@ -8,6 +8,14 @@ import type { EstadoForm, VendaPayload } from "@/lib/dados/tipos";
 
 function traduzErro(error: { message?: string } | null): string {
   const msg = error?.message ?? "";
+  if (/Abra o caixa/.test(msg))
+    return "Abra o caixa antes de vender (Caixa → Abrir).";
+  if (/nao vende sem estoque/.test(msg)) {
+    const m = msg.match(/Sem estoque de "([^"]+)" \(restam ([\d.,-]+)\)/);
+    return m
+      ? `Sem estoque de "${m[1]}" (restam ${m[2]}). Ajuste a quantidade.`
+      : "Produto sem estoque suficiente. Ajuste a quantidade.";
+  }
   if (/[Tt]axa de cartao/.test(msg))
     return "Configure as taxas do cartão (Gestão → Taxas do cartão) antes de vender no cartão.";
   if (/fiado exige um cliente/.test(msg))
