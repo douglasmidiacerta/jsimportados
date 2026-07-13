@@ -53,6 +53,8 @@ function lerCampos(fd: FormData) {
     observacoes: txt(fd, "observacoes"),
     loja_ativo: bool(fd, "loja_ativo"),
     destaque_home: bool(fd, "destaque_home"),
+    // ausente no form (cadastro rápido) => true (comportamento padrão do ERP)
+    vender_sem_estoque: String(fd.get("vender_sem_estoque") ?? "true") === "true",
     descricao: txt(fd, "descricao"),
     garantia: txt(fd, "garantia"),
     itens_inclusos: txt(fd, "itens_inclusos"),

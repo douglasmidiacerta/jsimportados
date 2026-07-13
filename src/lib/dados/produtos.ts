@@ -25,6 +25,7 @@ type LinhaProduto = {
   observacoes: string | null;
   loja_ativo?: boolean | null;
   destaque_home?: boolean | null;
+  vender_sem_estoque?: boolean | null;
   descricao?: string | null;
   garantia?: string | null;
   itens_inclusos?: string | null;
@@ -75,6 +76,7 @@ function normalizarLinha(row: LinhaProduto): ProdutoLista {
     observacoes: row.observacoes,
     loja_ativo: Boolean(row.loja_ativo),
     destaque_home: Boolean(row.destaque_home),
+    vender_sem_estoque: row.vender_sem_estoque ?? true,
     descricao: row.descricao ?? null,
     garantia: row.garantia ?? null,
     itens_inclusos: row.itens_inclusos ?? null,

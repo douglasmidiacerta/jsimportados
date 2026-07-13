@@ -5,6 +5,8 @@ import { formatarBRL, formatarData, formatarQtd } from "@/lib/formato";
 import { simboloMoeda } from "@/lib/dados/tipos";
 import { BarraTopo } from "@/components/BarraTopo";
 import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
+import { CancelarCompra } from "@/components/compras/CancelarCompra";
+import { cancelarCompraAction } from "../acoes-cancelar";
 
 export default async function CompraDetalhePage({
   params,
@@ -117,10 +119,20 @@ export default async function CompraDetalhePage({
           </p>
         )}
 
-        <p className="text-xs text-muted mt-6">
-          Esta compra deu entrada no estoque e atualizou o custo médio de cada
-          produto automaticamente.
-        </p>
+        {compra.status === "cancelada" ? (
+          <p className="mt-6 text-sm font-semibold text-danger bg-[var(--danger)]/10 border border-[var(--danger)]/30 rounded-xl px-4 py-3">
+            ⛔ Compra CANCELADA — a entrada no estoque foi revertida e a conta a
+            pagar cancelada.
+          </p>
+        ) : (
+          <>
+            <p className="text-xs text-muted mt-6">
+              Esta compra deu entrada no estoque e atualizou o custo médio de cada
+              produto automaticamente.
+            </p>
+            <CancelarCompra compraId={compra.id} action={cancelarCompraAction} />
+          </>
+        )}
       </main>
     </>
   );
