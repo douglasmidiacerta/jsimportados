@@ -25,10 +25,58 @@ function normalizarVenda(row: Record<string, unknown>): Venda {
     cartao_modalidade: (row.cartao_modalidade as "debito" | "credito") ?? null,
     cartao_parcelas: row.cartao_parcelas == null ? null : n(row.cartao_parcelas),
     fiado_vencimento: (row.fiado_vencimento as string) ?? null,
-    status: row.status as "liquidado" | "a_receber",
+    status: row.status as Venda["status"],
     observacoes: (row.observacoes as string) ?? null,
     criado_em: String(row.criado_em),
   };
+}
+
+/** Devolve itens de uma venda (parcial ou total) via RPC atômica da Onda 1. */
+export async function devolverVenda(
+  vendaId: string,
+  itens: { venda_item_id: string; quantidade: number; revendavel: boolean }[],
+  motivo: string,
+) {
+  const supabase = await criarClienteServidor();
+  const { error } = await supabase.rpc("devolver_venda", {
+    p_venda: vendaId,
+    p_itens: itens,
+    p_motivo: motivo,
+  });
+  return { error };
+}
+
+/** Cancela a venda inteira (devolve todo o restante). */
+export async function cancelarVenda(
+  vendaId: string,
+  motivo: string,
+  revendavel: boolean,
+) {
+  const supabase = await criarClienteServidor();
+  const { error } = await supabase.rpc("cancelar_venda", {
+    p_venda: vendaId,
+    p_motivo: motivo,
+    p_revendavel: revendavel,
+  });
+  return { error };
+}
+
+/** Quantidade já devolvida por item da venda (para limitar a devolução). */
+export async function devolvidoPorItem(
+  vendaId: string,
+): Promise<Record<string, number>> {
+  const supabase = await criarClienteServidor();
+  const { data, error } = await supabase
+    .from("devolucao_itens")
+    .select("venda_item_id, quantidade, devolucoes!inner(venda_id)")
+    .eq("devolucoes.venda_id", vendaId);
+  if (error) return {};
+  const mapa: Record<string, number> = {};
+  for (const r of data ?? []) {
+    const k = String(r.venda_item_id);
+    mapa[k] = (mapa[k] ?? 0) + Number(r.quantidade ?? 0);
+  }
+  return mapa;
 }
 
 /** Registra uma venda atomicamente via RPC. Sem .select() (RETURNING bate na RLS). */

@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 import { exigirGestao } from "@/lib/perfil";
-import { obterVendaGestao } from "@/lib/dados/vendas";
+import { obterVendaGestao, devolvidoPorItem } from "@/lib/dados/vendas";
 import { formatarBRL, formatarQtd, formatarData } from "@/lib/formato";
 import { FORMAS_PAGAMENTO } from "@/lib/dados/tipos";
 import { BarraTopo } from "@/components/BarraTopo";
 import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
+import { DevolverVenda, type ItemDevolvivel } from "@/components/vendas/DevolverVenda";
+import { devolverVendaAction } from "../actions";
 
 function rotuloForma(v: string) {
   return FORMAS_PAGAMENTO.find((f) => f.valor === v)?.rotulo ?? v;
@@ -17,8 +19,22 @@ export default async function VendaGestaoDetalhePage({
 }) {
   const { id } = await params;
   const perfil = await exigirGestao();
-  const venda = await obterVendaGestao(id);
+  const [venda, devolvido] = await Promise.all([
+    obterVendaGestao(id),
+    devolvidoPorItem(id),
+  ]);
   if (!venda) notFound();
+
+  const itensDevolviveis: ItemDevolvivel[] = venda.itens
+    .filter((it) => it.quantidade > 0)
+    .map((it) => ({
+      venda_item_id: it.id,
+      produto_nome: it.produto_nome ?? "Produto",
+      quantidade: it.quantidade,
+      restante: Math.max(0, it.quantidade - (devolvido[it.id] ?? 0)),
+      preco_unitario: it.preco_unitario,
+    }))
+    .filter((it) => it.restante > 0);
 
   return (
     <>
@@ -29,6 +45,18 @@ export default async function VendaGestaoDetalhePage({
           descricao={`${formatarData(venda.data_venda)} · ${rotuloForma(venda.forma_pagamento)}${venda.cliente_nome ? ` · ${venda.cliente_nome}` : ""}`}
           voltarHref="/gestao/vendas"
         />
+
+        {venda.status === "cancelada" && (
+          <p className="mb-4 text-sm font-semibold text-danger bg-[var(--danger)]/10 border border-[var(--danger)]/30 rounded-xl px-4 py-3">
+            ⛔ Venda CANCELADA{venda.observacoes ? "" : ""} — estoque, caixa e
+            relatórios já foram acertados.
+          </p>
+        )}
+        {venda.status === "devolvida_parcial" && (
+          <p className="mb-4 text-sm font-semibold text-amber bg-[var(--amber-soft)] border border-[color:var(--amber)]/30 rounded-xl px-4 py-3">
+            ↩️ Esta venda teve devolução parcial (linhas em vermelho abaixo).
+          </p>
+        )}
 
         {/* Itens com margem */}
         <div className="rounded-2xl border border-line bg-surface overflow-hidden mb-5">
@@ -45,8 +73,16 @@ export default async function VendaGestaoDetalhePage({
               </thead>
               <tbody>
                 {venda.itens.map((it) => (
-                  <tr key={it.id} className="border-b border-line last:border-0">
-                    <td className="px-4 py-3 text-ink font-medium">{it.produto_nome ?? "—"}</td>
+                  <tr
+                    key={it.id}
+                    className={`border-b border-line last:border-0 ${it.quantidade < 0 ? "linha-vermelha" : ""}`}
+                  >
+                    <td className="px-4 py-3 text-ink font-medium">
+                      {it.produto_nome ?? "—"}
+                      {it.quantidade < 0 && (
+                        <span className="ml-2 text-[10px] font-mono uppercase tracking-wide text-danger">devolução</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-right tabular-nums">
                       {formatarQtd(it.quantidade)}
                       {it.produto_unidade ? ` ${it.produto_unidade}` : ""}
@@ -116,6 +152,16 @@ export default async function VendaGestaoDetalhePage({
               </div>
             </div>
           </>
+        )}
+
+        {/* Devolver / Cancelar (Onda 1) */}
+        {venda.status !== "cancelada" && itensDevolviveis.length > 0 && (
+          <DevolverVenda
+            vendaId={venda.id}
+            itens={itensDevolviveis}
+            formaPagamento={venda.forma_pagamento}
+            action={devolverVendaAction}
+          />
         )}
       </main>
     </>

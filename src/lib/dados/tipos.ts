@@ -293,7 +293,7 @@ export type Venda = {
   cartao_modalidade: "debito" | "credito" | null;
   cartao_parcelas: number | null;
   fiado_vencimento: string | null;
-  status: "liquidado" | "a_receber";
+  status: "liquidado" | "a_receber" | "cancelada" | "devolvida_parcial";
   observacoes: string | null;
   criado_em: string;
 };
