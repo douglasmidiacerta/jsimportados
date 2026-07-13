@@ -770,3 +770,46 @@ export type ConferenciaSessao = {
   pix: { vendido: number; lancado_na_conta: number; conta: string | null };
   cartao: ConfCartaoMaquininha[];
 };
+
+// ============ Onda 2 parte 2: conciliação OFX/CSV + fluxo ============
+
+/** Uma linha do extrato bancário importado. */
+export type ExtratoLinha2 = {
+  id: string;
+  conta_id: string;
+  data: string;
+  valor: number;
+  descricao: string | null;
+  fitid: string;
+  lancamento_id: string | null;
+  conciliado: boolean;
+};
+
+/** Sugestão de casamento (linha do banco ↔ lançamento interno). */
+export type SugestaoConciliacao = {
+  extrato_id: string;
+  extrato_data: string;
+  extrato_valor: number;
+  extrato_desc: string | null;
+  lancamento_id: string;
+  lancamento_data: string;
+  lancamento_desc: string | null;
+  dias: number;
+};
+
+/** Linha do relatório de fluxo de caixa (por conta, num período). */
+export type FluxoCaixaLinha = {
+  conta_id: string;
+  conta_nome: string;
+  saldo_inicial: number;
+  entradas: number;
+  saidas: number;
+  saldo_final: number;
+};
+
+/** Resultado da importação de um extrato. */
+export type ResultadoImportacao = {
+  recebidas: number;
+  inseridas: number;
+  duplicadas: number;
+};

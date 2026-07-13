@@ -117,5 +117,18 @@ extrato (regime caixa) + DRE (competência). Cada elo guarda `criado_por` +
 - **Compatibilidade**: sem maquininha/contas cadastradas, tudo se comporta como
   antes — a trava do cartão só liga ao cadastrar a 1ª maquininha.
 
+## 7. Onda 2 parte 2 — conciliação OFX/CSV (migration 0016, 13/07/2026)
+- **extrato_importado**: linha do banco (data, valor assinado, descrição, fitid).
+  `unique(conta_id, fitid)` impede reimportar a mesma linha; um lançamento só
+  casa com UMA linha (`unique(lancamento_id)`).
+- **importar_extrato(conta, jsonb)**: insere ignorando duplicatas por fitid;
+  parse do arquivo é no app (OFX SGML e CSV, valor BR/US assinado).
+- **sugestoes_conciliacao(conta)**: casa linha↔lançamento por valor IGUAL e data
+  ±3 dias, só não-conciliados. **conciliar_linha/desconciliar_linha** marcam o
+  `conciliado` dos dois lados (valida valor e conta; bloqueia duplo-casamento).
+- **rel_fluxo_caixa(inicio, fim)**: por conta = saldo inicial (antes) + entradas
+  + saídas + saldo final. Dinheiro em espécie fica no módulo Caixa.
+- RLS: extrato só-gestão; escrita só via RPC.
+
 > Este arquivo é o contrato de regras. Toda leva/onda que criar trava nova
 > ATUALIZA este documento (com o nº da migration que a implementou).
