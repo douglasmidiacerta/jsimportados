@@ -1,6 +1,6 @@
 import { exigirGestao } from "@/lib/perfil";
 import { listarCompras } from "@/lib/dados/compras";
-import { formatarBRL, formatarData } from "@/lib/formato";
+import { formatarBRL, formatarData, numCompra } from "@/lib/formato";
 import { simboloMoeda } from "@/lib/dados/tipos";
 import { BarraTopo } from "@/components/BarraTopo";
 import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
@@ -17,7 +17,7 @@ export default async function ComprasPage() {
 
   const itens: ItemLista[] = compras.map((c) => ({
     id: c.id,
-    titulo: c.fornecedor_nome ?? "Compra sem fornecedor",
+    titulo: `${numCompra(c.numero)} · ${c.fornecedor_nome ?? "Compra sem fornecedor"}`,
     subtitulo: `${formatarData(c.data_compra)} · ${simboloMoeda(c.moeda)}`,
     extra: formatarBRL(c.total_geral_brl),
   }));
@@ -26,6 +26,7 @@ export default async function ComprasPage() {
     id: c.id,
     href: `/gestao/compras/${c.id}`,
     celulas: [
+      numCompra(c.numero),
       c.fornecedor_nome ?? "Sem fornecedor",
       formatarData(c.data_compra),
       c.moeda === "BRL"
@@ -59,6 +60,7 @@ export default async function ComprasPage() {
         <div className="hidden lg:block">
           <TabelaBusca
             colunas={[
+              { titulo: "Nº" },
               { titulo: "Fornecedor" },
               { titulo: "Data" },
               { titulo: "Moeda / Câmbio" },
@@ -69,6 +71,7 @@ export default async function ComprasPage() {
             linhas={linhas}
             rodape={[
               `${compras.length} compra(s)`,
+              null,
               null,
               null,
               formatarBRL(totalItens),

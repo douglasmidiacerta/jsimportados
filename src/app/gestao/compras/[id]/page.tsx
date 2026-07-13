@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { exigirGestao } from "@/lib/perfil";
 import { obterCompra } from "@/lib/dados/compras";
-import { formatarBRL, formatarData, formatarQtd } from "@/lib/formato";
+import { formatarBRL, formatarData, formatarQtd, numCompra } from "@/lib/formato";
 import { simboloMoeda } from "@/lib/dados/tipos";
 import { BarraTopo } from "@/components/BarraTopo";
 import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
@@ -27,7 +27,7 @@ export default async function CompraDetalhePage({
       <BarraTopo nome={perfil.nome} papel={perfil.papel} area="gestao" />
       <main className="mx-auto max-w-3xl w-full px-4 py-6 sm:py-10 flex-1">
         <CabecalhoCadastro
-          titulo="Compra"
+          titulo={`Compra ${numCompra(compra.numero)}`}
           descricao={compra.fornecedor_nome ?? "Sem fornecedor"}
           voltarHref="/gestao/compras"
         />

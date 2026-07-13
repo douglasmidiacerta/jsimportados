@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { exigirGestao } from "@/lib/perfil";
 import { obterVendaGestao, devolvidoPorItem } from "@/lib/dados/vendas";
-import { formatarBRL, formatarQtd, formatarData } from "@/lib/formato";
+import { formatarBRL, formatarQtd, formatarData, numVenda } from "@/lib/formato";
 import { FORMAS_PAGAMENTO } from "@/lib/dados/tipos";
 import { BarraTopo } from "@/components/BarraTopo";
 import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
@@ -41,7 +41,7 @@ export default async function VendaGestaoDetalhePage({
       <BarraTopo nome={perfil.nome} papel={perfil.papel} area="gestao" />
       <main className="mx-auto max-w-3xl w-full px-4 py-6 sm:py-10 flex-1">
         <CabecalhoCadastro
-          titulo="Venda"
+          titulo={`Venda ${numVenda(venda.numero)}`}
           descricao={`${formatarData(venda.data_venda)} · ${rotuloForma(venda.forma_pagamento)}${venda.cliente_nome ? ` · ${venda.cliente_nome}` : ""}`}
           voltarHref="/gestao/vendas"
         />

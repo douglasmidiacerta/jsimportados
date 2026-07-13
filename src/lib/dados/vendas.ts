@@ -15,6 +15,7 @@ const n = (v: unknown) => Number(v ?? 0);
 function normalizarVenda(row: Record<string, unknown>): Venda {
   return {
     id: String(row.id),
+    numero: row.numero == null ? null : n(row.numero),
     cliente_id: (row.cliente_id as string) ?? null,
     forma_pagamento: row.forma_pagamento as FormaPagamento,
     data_venda: String(row.data_venda),

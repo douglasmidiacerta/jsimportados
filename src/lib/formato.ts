@@ -1,5 +1,14 @@
 import { SUPABASE_URL } from "@/lib/supabase/config";
 
+/** Número de documento amigável: docNumero("V", 123) => "V-000123". */
+export function docNumero(prefixo: string, n: number | null | undefined): string {
+  if (n == null) return "—";
+  return `${prefixo}-${String(n).padStart(6, "0")}`;
+}
+export const numVenda = (n: number | null | undefined) => docNumero("V", n);
+export const numCompra = (n: number | null | undefined) => docNumero("C", n);
+export const numOrcamento = (n: number | null | undefined) => docNumero("O", n);
+
 /** Formata um número como moeda brasileira (R$). */
 export function formatarBRL(valor: number | string | null | undefined): string {
   const n = typeof valor === "string" ? Number(valor) : (valor ?? 0);
