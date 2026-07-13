@@ -17,6 +17,7 @@ const GRUPOS = [
   { nome: "Lucratividade + ABC de produtos", desc: "O que dá mais lucro e o que mais vende", href: "/gestao/relatorios/lucratividade" },
   { nome: "ABC de clientes", desc: "Quem representa a maior parte das compras", href: "/gestao/relatorios/clientes" },
   { nome: "ABC de estoque", desc: "Onde está o dinheiro parado", href: "/gestao/relatorios/estoque" },
+  { nome: "Patrimônio em estoque", desc: "Valor a custo e a preço de venda + CSV", href: "/gestao/relatorios/patrimonio" },
   { nome: "Em aberto + caixa", desc: "A receber, a pagar e auditoria de caixa", href: "/gestao/relatorios/em-aberto" },
   { nome: "DRE gerencial", desc: "Resultado por mês (competência)", href: "/gestao/dre" },
   { nome: "Extrato / fluxo de caixa", desc: "O que entrou e saiu de verdade", href: "/gestao/extrato" },

@@ -71,7 +71,9 @@ export function PDV({
   const filtrados = useMemo(() => {
     const q = normalizar(busca);
     const base = q
-      ? produtos.filter((p) => normalizar(`${p.nome} ${p.categoria_nome ?? ""}`).includes(q))
+      ? produtos.filter((p) =>
+          normalizar(`${p.nome} ${p.categoria_nome ?? ""} ${p.codigo_barras ?? ""}`).includes(q),
+        )
       : produtos;
     return base.slice(0, 30);
   }, [busca, produtos]);

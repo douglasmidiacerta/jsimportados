@@ -10,7 +10,15 @@ import { Interruptor } from "./Interruptor";
 import { SeletorCategorias } from "./SeletorCategorias";
 import { MargensProduto } from "./MargensProduto";
 import { BotaoSalvar } from "./BotaoSalvar";
-import { numeroParaCampoBR, formatarBRL, formatarQtd } from "@/lib/formato";
+import {
+  numeroParaCampoBR,
+  parseMoedaBR,
+  formatarBRL,
+  formatarQtd,
+  codProduto,
+  gerarEAN13,
+  precoPorMargem,
+} from "@/lib/formato";
 import {
   UNIDADES,
   type Categoria,
@@ -47,9 +55,17 @@ export function FormularioProduto({
   const [estado, formAction, enviando] = useActionState(action, {});
   const completo = modo === "gestao";
 
-  // Preços em estado para as margens ao vivo.
-  const [precoVarejo, setPrecoVarejo] = useState(produto?.preco_venda ?? 0);
+  // Preço de varejo controlado (a margem% pode setar). Margens derivam dele.
+  const [precoVarejoTexto, setPrecoVarejoTexto] = useState(
+    produto ? numeroParaCampoBR(produto.preco_venda) : "",
+  );
+  const precoVarejo = parseMoedaBR(precoVarejoTexto);
   const [precoAtacado, setPrecoAtacado] = useState(produto?.preco_atacado ?? 0);
+
+  // Código de barras (EAN digitado ou gerado) e margem% → preço.
+  const [codigoBarras, setCodigoBarras] = useState(produto?.codigo_barras ?? "");
+  const [margemPct, setMargemPct] = useState("");
+  const custoBase = produto?.custo_ultima_compra ?? produto?.custo ?? null;
 
   // Garante que a categoria/subcategoria atuais apareçam mesmo se arquivadas.
   const listaCategorias = [...categorias];
@@ -103,11 +119,50 @@ export function FormularioProduto({
         </div>
       )}
 
+      {/* ---- Código de barras + código interno (Leva C) ---- */}
+      {completo && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-1.5">
+            <span className="text-sm font-semibold text-ink">Código de barras (opcional)</span>
+            <div className="flex gap-2">
+              <input
+                name="codigo_barras"
+                value={codigoBarras}
+                onChange={(e) => setCodigoBarras(e.target.value.replace(/\D/g, ""))}
+                inputMode="numeric"
+                placeholder="Escaneie ou digite o EAN"
+                className="flex-1 min-h-[52px] rounded-xl border border-line bg-surface-2 px-4 text-base text-ink placeholder:text-muted outline-none focus:border-accent"
+              />
+              {produto?.codigo_sequencial != null && (
+                <button
+                  type="button"
+                  onClick={() => setCodigoBarras(gerarEAN13(produto.codigo_sequencial!))}
+                  title="Gera um código interno para etiquetar/escanear"
+                  className="shrink-0 h-[52px] px-3 rounded-xl border border-line text-sm font-semibold text-accent-ink hover:bg-surface-2"
+                >
+                  Gerar
+                </button>
+              )}
+            </div>
+            <span className="text-xs text-muted">
+              Use o código de fábrica, ou toque em “Gerar” para um código interno.
+            </span>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <span className="text-sm font-semibold text-ink">Código interno</span>
+            <div className="min-h-[52px] rounded-xl border border-line bg-surface-2 px-4 flex items-center text-base font-mono text-muted">
+              {produto?.codigo_sequencial != null ? codProduto(produto.codigo_sequencial) : "gerado ao salvar"}
+            </div>
+            <span className="text-xs text-muted">Número curto do produto (automático).</span>
+          </div>
+        </div>
+      )}
+
       <CampoPreco
         label="Preço de venda (varejo)"
         name="preco_venda"
-        defaultValue={produto ? numeroParaCampoBR(produto.preco_venda) : ""}
-        onValor={setPrecoVarejo}
+        valor={precoVarejoTexto}
+        onTexto={setPrecoVarejoTexto}
         dica={completo ? undefined : "Se não souber agora, deixe em branco — a gestão completa depois."}
       />
 
@@ -140,13 +195,63 @@ export function FormularioProduto({
             custoMedio={produto?.custo ?? null}
           />
 
-          <CampoFormulario
-            label="Unidade de venda"
-            name="unidade"
-            as="select"
-            defaultValue={produto?.unidade ?? "un"}
-            opcoes={UNIDADES}
-          />
+          {/* ---- Preço pela margem (custo → margem% → preço) ---- */}
+          {custoBase != null && custoBase > 0 && (
+            <div className="rounded-xl border border-line bg-surface-2 p-4 flex flex-col gap-2">
+              <span className="text-sm font-semibold text-ink">Definir preço pela margem</span>
+              <div className="flex flex-wrap items-end gap-2">
+                <label className="flex flex-col gap-1">
+                  <span className="text-xs text-muted">Margem sobre a venda</span>
+                  <span className="flex items-center gap-1">
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={margemPct}
+                      onChange={(e) => setMargemPct(e.target.value)}
+                      placeholder="Ex.: 30"
+                      className="w-24 h-11 rounded-lg border border-line bg-surface px-3 text-ink outline-none focus:border-accent"
+                    />
+                    <span className="text-muted">%</span>
+                  </span>
+                </label>
+                <button
+                  type="button"
+                  disabled={!(parseMoedaBR(margemPct) > 0)}
+                  onClick={() => setPrecoVarejoTexto(precoPorMargem(custoBase, parseMoedaBR(margemPct)))}
+                  className="h-11 px-4 rounded-lg bg-accent text-white font-semibold disabled:opacity-50"
+                >
+                  Aplicar no preço
+                </button>
+                {parseMoedaBR(margemPct) > 0 && precoPorMargem(custoBase, parseMoedaBR(margemPct)) && (
+                  <span className="text-sm text-muted">
+                    → varejo {formatarBRL(parseMoedaBR(precoPorMargem(custoBase, parseMoedaBR(margemPct))))}
+                  </span>
+                )}
+              </div>
+              <span className="text-[11px] text-muted">
+                Sobre o custo da última compra ({formatarBRL(custoBase)}). Margem = lucro ÷ preço.
+              </span>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <CampoFormulario
+              label="Unidade de venda"
+              name="unidade"
+              as="select"
+              defaultValue={produto?.unidade ?? "un"}
+              opcoes={UNIDADES}
+            />
+            <CampoFormulario
+              label="Estoque mínimo (reposição)"
+              name="estoque_minimo"
+              type="text"
+              inputMode="decimal"
+              defaultValue={produto && produto.estoque_minimo > 0 ? numeroParaCampoBR(produto.estoque_minimo) : ""}
+              placeholder="Ex.: 5"
+              dica="Avisa quando o saldo chega nesse número. Deixe vazio para não avisar."
+            />
+          </div>
 
           <Interruptor
             name="vender_sem_estoque"

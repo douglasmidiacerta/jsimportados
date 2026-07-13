@@ -1,7 +1,26 @@
 import { criarClienteServidor } from "@/lib/supabase/server";
-import type { EstoqueBalcaoItem, EstoqueGestaoItem } from "./tipos";
+import type { EstoqueBalcaoItem, EstoqueGestaoItem, PatrimonioItem } from "./tipos";
 
 const n = (v: unknown) => Number(v ?? 0);
+
+/** Patrimônio: valor do estoque a custo e a preço de venda (rel_patrimonio). */
+export async function listarPatrimonio(): Promise<PatrimonioItem[]> {
+  const supabase = await criarClienteServidor();
+  const { data, error } = await supabase.rpc("rel_patrimonio");
+  if (error) throw error;
+  return (data ?? []).map((r: Record<string, unknown>) => ({
+    produto_id: String(r.produto_id),
+    nome: String(r.nome),
+    codigo_sequencial: r.codigo_sequencial == null ? null : n(r.codigo_sequencial),
+    estoque: n(r.estoque),
+    estoque_minimo: n(r.estoque_minimo),
+    custo_medio: r.custo_medio == null ? null : n(r.custo_medio),
+    preco_venda: n(r.preco_venda),
+    valor_custo: n(r.valor_custo),
+    valor_venda: n(r.valor_venda),
+    abaixo_minimo: Boolean(r.abaixo_minimo),
+  }));
+}
 
 /** Estoque para o balcão (Modo Operação): SEM custo, só produtos ativos. */
 export async function listarEstoqueBalcao(
@@ -41,7 +60,7 @@ export async function listarEstoqueGestao(
   let query = supabase
     .from("produtos")
     .select(
-      "id, nome, unidade, estoque_atual, categorias!categoria_id(nome), produtos_custo(custo)",
+      "id, nome, unidade, estoque_atual, estoque_minimo, categorias!categoria_id(nome), produtos_custo(custo)",
     )
     .eq("ativo", true)
     .order("nome");
@@ -63,6 +82,7 @@ export async function listarEstoqueGestao(
       ? row.produtos_custo[0]
       : row.produtos_custo;
     const custo = pc?.custo == null ? null : n(pc.custo);
+    const minimo = n(row.estoque_minimo);
     return {
       id: String(row.id),
       nome: String(row.nome),
@@ -71,6 +91,8 @@ export async function listarEstoqueGestao(
       estoque_atual: estoque,
       custo,
       valor_em_estoque: custo == null ? 0 : Math.round(estoque * custo * 100) / 100,
+      estoque_minimo: minimo,
+      abaixo_minimo: minimo > 0 && estoque <= minimo,
     };
   });
 }

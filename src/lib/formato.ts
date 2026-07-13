@@ -1,5 +1,36 @@
 import { SUPABASE_URL } from "@/lib/supabase/config";
 
+/** Código interno do produto: codProduto(123) => "P-000123". */
+export function codProduto(n: number | null | undefined): string {
+  if (n == null) return "—";
+  return `P-${String(n).padStart(6, "0")}`;
+}
+
+/**
+ * Gera um EAN-13 interno válido a partir de um número sequencial. Usa o prefixo
+ * "200" (reservado pelo GS1 para uso interno da loja) + 9 dígitos + dígito
+ * verificador. Serve para etiquetar/escanear produtos sem código de fábrica.
+ */
+export function gerarEAN13(seq: number): string {
+  const base = ("200" + String(seq).padStart(9, "0")).slice(0, 12);
+  let soma = 0;
+  for (let i = 0; i < 12; i++) {
+    soma += Number(base[i]) * (i % 2 === 0 ? 1 : 3);
+  }
+  const dv = (10 - (soma % 10)) % 10;
+  return base + dv;
+}
+
+/**
+ * Preço a partir do custo e da margem sobre a VENDA (%): preço = custo/(1−m/100).
+ * Ex.: custo 40, margem 20% → 50. Retorna "" se inválido.
+ */
+export function precoPorMargem(custo: number | null, margemPct: number): string {
+  if (custo == null || custo <= 0 || margemPct >= 100) return "";
+  const preco = custo / (1 - margemPct / 100);
+  return numeroParaCampoBR(Math.round(preco * 100) / 100);
+}
+
 /** Número de documento amigável: docNumero("V", 123) => "V-000123". */
 export function docNumero(prefixo: string, n: number | null | undefined): string {
   if (n == null) return "—";
