@@ -142,6 +142,24 @@ export type Cliente = {
 /** Estado retornado pelas Server Actions de formulário. */
 export type EstadoForm = { erro?: string };
 
+/** Configuração da empresa (Leva E) — singleton. */
+export type EmpresaConfig = {
+  nome: string;
+  cnpj: string | null;
+  telefone: string | null;
+  email: string | null;
+  cep: string | null;
+  logradouro: string | null;
+  numero: string | null;
+  complemento: string | null;
+  bairro: string | null;
+  cidade: string | null;
+  uf: string | null;
+  logo_path: string | null;
+  mensagem_rodape: string | null;
+  vias: number;
+};
+
 /** Unidades de venda disponíveis (rótulo amigável -> valor gravado). */
 export const UNIDADES: { valor: string; rotulo: string }[] = [
   { valor: "un", rotulo: "Unidade" },

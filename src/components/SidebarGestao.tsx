@@ -33,6 +33,7 @@ const MENU: Item[] = [
   { nome: "CRM & Preços", href: "/gestao/crm", icone: ic("M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2|M9 7a4 4 0 1 1 0 .01|M22 21v-2a4 4 0 0 0-3-3.87") },
   { nome: "Relatórios", href: "/gestao/relatorios", icone: ic("M4 4v16h16|M8 16V10|M12 16V6|M16 16v-4") },
   { nome: "Usuários", href: "/gestao/usuarios", icone: ic("M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2|M9 7a4 4 0 1 1 0 .01|M19 8v6|M22 11h-6") },
+  { nome: "Configurações", href: "/gestao/configuracoes", extras: ["/gestao/backup"], icone: ic("M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z|M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z") },
 ];
 
 /** Menu lateral fixo do Modo Gestão (só desktop; no mobile a BarraTopo assume). */
