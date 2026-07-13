@@ -30,6 +30,9 @@ type LinhaProduto = {
   garantia?: string | null;
   itens_inclusos?: string | null;
   especificacoes?: string | null;
+  codigo_barras?: string | null;
+  codigo_sequencial?: string | number | null;
+  estoque_minimo?: string | number | null;
   ativo: boolean;
   categorias: NomeEmbed; // categoria (FK categoria_id) — mantém a chave 'categorias'
   subcategoria?: NomeEmbed; // FK subcategoria_id (alias)
@@ -81,6 +84,9 @@ function normalizarLinha(row: LinhaProduto): ProdutoLista {
     garantia: row.garantia ?? null,
     itens_inclusos: row.itens_inclusos ?? null,
     especificacoes: row.especificacoes ?? null,
+    codigo_barras: row.codigo_barras ?? null,
+    codigo_sequencial: num(row.codigo_sequencial),
+    estoque_minimo: Number(row.estoque_minimo ?? 0),
     ativo: row.ativo,
     categoria_nome: row.categorias?.nome ?? null,
     subcategoria_nome: row.subcategoria?.nome ?? null,

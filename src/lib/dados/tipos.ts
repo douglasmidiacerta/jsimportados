@@ -31,6 +31,10 @@ export type Produto = {
   garantia: string | null;
   itens_inclusos: string | null;
   especificacoes: string | null;
+  // Leva C
+  codigo_barras: string | null;
+  codigo_sequencial: number | null;
+  estoque_minimo: number;
   ativo: boolean;
 };
 
@@ -219,6 +223,22 @@ export type EstoqueGestaoItem = {
   estoque_atual: number;
   custo: number | null;
   valor_em_estoque: number;
+  estoque_minimo: number; // Leva C
+  abaixo_minimo: boolean; // Leva C: saldo <= mínimo (mínimo > 0)
+};
+
+/** Linha do relatório de patrimônio (custo × venda) — Leva C. */
+export type PatrimonioItem = {
+  produto_id: string;
+  nome: string;
+  codigo_sequencial: number | null;
+  estoque: number;
+  estoque_minimo: number;
+  custo_medio: number | null;
+  preco_venda: number;
+  valor_custo: number;
+  valor_venda: number;
+  abaixo_minimo: boolean;
 };
 
 // Entradas do formulário de compra (enviadas cruas ao servidor via RPC)
@@ -266,6 +286,7 @@ export type ProdutoPDV = {
   estoque_atual: number;
   preco_venda: number; // = preço da lista padrão (Varejo)
   precos: Record<string, number>; // Fase 7: lista_id -> preço override (só listas != padrão)
+  codigo_barras: string | null; // Leva C: busca/escaneia no PDV
 };
 
 export type ItemVendaInput = {

@@ -10,6 +10,8 @@ export function CampoPreco({
   defaultValue,
   dica,
   onValor,
+  valor: valorControlado,
+  onTexto,
 }: {
   label: string;
   name: string;
@@ -17,8 +19,13 @@ export function CampoPreco({
   dica?: string;
   /** Notifica o valor parseado a cada digitação (para margens ao vivo). */
   onValor?: (valor: number) => void;
+  /** Modo controlado (ex.: margem% setando o preço). Se ausente, é interno. */
+  valor?: string;
+  onTexto?: (t: string) => void;
 }) {
-  const [texto, setTexto] = useState(defaultValue ?? "");
+  const [interno, setInterno] = useState(defaultValue ?? "");
+  const texto = valorControlado ?? interno;
+  const setTexto = onTexto ?? setInterno;
   const valor = parseMoedaBR(texto);
   const mostrarPreview = texto.trim() !== "" && valor > 0;
 

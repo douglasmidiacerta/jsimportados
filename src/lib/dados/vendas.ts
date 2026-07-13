@@ -95,7 +95,7 @@ export async function listarProdutosPDV(busca?: string): Promise<ProdutoPDV[]> {
   let query = supabase
     .from("produtos")
     .select(
-      "id, nome, unidade, foto_path, estoque_atual, preco_venda, categorias!categoria_id(nome), precos(lista_id, preco)",
+      "id, nome, unidade, foto_path, estoque_atual, preco_venda, codigo_barras, categorias!categoria_id(nome), precos(lista_id, preco)",
     )
     .eq("ativo", true)
     .order("nome");
@@ -119,6 +119,7 @@ export async function listarProdutosPDV(busca?: string): Promise<ProdutoPDV[]> {
       estoque_atual: n(row.estoque_atual),
       preco_venda: n(row.preco_venda),
       precos,
+      codigo_barras: (row.codigo_barras as string) ?? null,
     };
   });
 }

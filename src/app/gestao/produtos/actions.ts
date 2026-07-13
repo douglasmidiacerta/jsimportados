@@ -16,8 +16,12 @@ function revalidarProdutos() {
 
 function mensagemErro(error: { code?: string; message?: string }): string {
   if (error.code === "23505") {
+    if (/codigo_barras/i.test(error.message ?? ""))
+      return "Esse código de barras já está em outro produto.";
     return "Já existe um produto com esse nome nessa categoria.";
   }
+  if (/codigo_barras_fmt/i.test(error.message ?? ""))
+    return "Código de barras inválido — use só números (6 a 14 dígitos).";
   return "Não deu para salvar. Tente de novo.";
 }
 
@@ -59,6 +63,12 @@ function lerCampos(fd: FormData) {
     garantia: txt(fd, "garantia"),
     itens_inclusos: txt(fd, "itens_inclusos"),
     especificacoes: txt(fd, "especificacoes"),
+    // Leva C: código de barras (só dígitos; vazio -> null) e estoque mínimo.
+    codigo_barras: (() => {
+      const d = String(fd.get("codigo_barras") ?? "").replace(/\D/g, "");
+      return d.length >= 6 ? d : null;
+    })(),
+    estoque_minimo: numOpc(fd, "estoque_minimo") ?? 0,
   };
 }
 
