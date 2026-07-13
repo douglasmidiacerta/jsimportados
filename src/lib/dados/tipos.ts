@@ -162,6 +162,7 @@ export function simboloMoeda(m: Moeda): string {
 /** Cabeçalho de compra (para listagem). */
 export type Compra = {
   id: string;
+  numero: number | null;
   fornecedor_id: string | null;
   moeda: Moeda;
   cambio: number;
@@ -289,6 +290,7 @@ export type VendaPayload = {
 
 export type Venda = {
   id: string;
+  numero: number | null;
   cliente_id: string | null;
   forma_pagamento: FormaPagamento;
   data_venda: string;
@@ -812,4 +814,45 @@ export type ResultadoImportacao = {
   recebidas: number;
   inseridas: number;
   duplicadas: number;
+};
+
+// ==================== Leva B: orçamentos ====================
+
+export type StatusOrcamento = "aberto" | "convertido" | "cancelado";
+
+export type Orcamento = {
+  id: string;
+  numero: number;
+  cliente_id: string | null;
+  cliente_nome: string | null;
+  lista_preco_id: string | null;
+  observacoes: string | null;
+  validade: string | null;
+  status: StatusOrcamento;
+  venda_id: string | null;
+  cancelado_motivo: string | null;
+  subtotal: number;
+  desconto: number;
+  total: number;
+  criado_em: string;
+};
+
+export type OrcamentoItem = {
+  id: string;
+  produto_id: string;
+  produto_nome: string | null;
+  quantidade: number;
+  preco_unitario: number;
+  subtotal: number;
+};
+
+export type OrcamentoDetalhe = Orcamento & { itens: OrcamentoItem[] };
+
+export type OrcamentoPayload = {
+  cliente_id: string | null;
+  lista_preco_id: string | null;
+  observacoes: string | null;
+  validade: string | null;
+  desconto: number;
+  itens: ItemVendaInput[];
 };

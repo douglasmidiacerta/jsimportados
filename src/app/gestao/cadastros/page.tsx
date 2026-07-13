@@ -67,6 +67,14 @@ const CARTOES: Cartao[] = [
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" /><path d="M9 6h6M9 10h6M12 18h.01" /></svg>
     ),
   },
+  {
+    titulo: "Contas",
+    descricao: "Bancos e maquininhas, com saldo",
+    href: "/gestao/contas",
+    icone: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 10h18" /><rect x="3" y="6" width="18" height="13" rx="2" /><path d="M7 15h4" /></svg>
+    ),
+  },
 ];
 
 export default async function CadastrosPage() {

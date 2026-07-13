@@ -1,6 +1,6 @@
 import { exigirGestao } from "@/lib/perfil";
 import { listarVendasGestao } from "@/lib/dados/vendas";
-import { formatarBRL, formatarData } from "@/lib/formato";
+import { formatarBRL, formatarData, numVenda } from "@/lib/formato";
 import { FORMAS_PAGAMENTO } from "@/lib/dados/tipos";
 import { BarraTopo } from "@/components/BarraTopo";
 import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
@@ -22,7 +22,7 @@ export default async function VendasGestaoPage() {
 
   const itens: ItemLista[] = vendas.map((v) => ({
     id: v.id,
-    titulo: v.cliente_nome ?? "Venda no balcão",
+    titulo: `${numVenda(v.numero)} · ${v.cliente_nome ?? "Venda no balcão"}`,
     subtitulo: `${formatarData(v.data_venda)} · ${rotuloForma(v.forma_pagamento)} · lucro ${v.custo_completo ? "" : "~"}${formatarBRL(v.lucro_bruto)}`,
     extra: formatarBRL(v.total),
   }));
@@ -41,6 +41,7 @@ export default async function VendasGestaoPage() {
               ? ("amarela" as const)
               : ("verde" as const),
     celulas: [
+      numVenda(v.numero),
       v.cliente_nome ?? "Venda no balcão",
       formatarData(v.data_venda),
       v.forma_pagamento === "cartao" && v.cartao_parcelas
@@ -80,6 +81,7 @@ export default async function VendasGestaoPage() {
         <div className="hidden lg:block">
           <TabelaBusca
             colunas={[
+              { titulo: "Nº" },
               { titulo: "Cliente" },
               { titulo: "Data" },
               { titulo: "Forma" },
@@ -92,6 +94,7 @@ export default async function VendasGestaoPage() {
             linhas={linhas}
             rodape={[
               `${vendas.length} venda(s)`,
+              null,
               null,
               null,
               formatarBRL(totalVendido),

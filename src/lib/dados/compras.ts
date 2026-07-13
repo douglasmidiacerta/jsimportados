@@ -39,6 +39,7 @@ export async function listarCompras(): Promise<CompraLista[]> {
     };
     return {
       id: String(row.id),
+      numero: row.numero == null ? null : n(row.numero),
       fornecedor_id: (row.fornecedor_id as string) ?? null,
       moeda: row.moeda as Moeda,
       cambio: n(row.cambio),
@@ -95,6 +96,7 @@ export async function obterCompra(id: string): Promise<CompraDetalhe | null> {
 
   return {
     id: String(row.id),
+    numero: row.numero == null ? null : n(row.numero),
     fornecedor_id: (row.fornecedor_id as string) ?? null,
     fornecedor_nome: row.fornecedores?.nome ?? null,
     moeda: row.moeda as Moeda,
