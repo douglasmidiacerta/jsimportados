@@ -13,6 +13,8 @@ function traduzErro(error: { message?: string } | null): string {
     return "Já tem um caixa aberto. Feche o atual primeiro.";
   if (/abra o caixa/i.test(msg)) return "Abra o caixa antes de fazer isso.";
   if (/nao ha caixa|não há caixa/i.test(msg)) return "Não há caixa aberto.";
+  if (/precisa de justificativa/i.test(msg))
+    return "O valor contado não bateu com o esperado. Escreva o que houve no campo de observação para poder fechar.";
   if (/permiss/i.test(msg)) return "Você não tem permissão para isso.";
   if (/maior que zero|diferente de zero/i.test(msg))
     return "Informe um valor válido.";

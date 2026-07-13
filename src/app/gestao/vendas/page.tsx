@@ -31,11 +31,15 @@ export default async function VendasGestaoPage() {
     id: v.id,
     href: `/gestao/vendas/${v.id}`,
     cor:
-      v.lucro_bruto < 0
+      v.status === "cancelada"
         ? ("vermelha" as const)
-        : v.status === "a_receber"
-          ? ("amarela" as const)
-          : ("verde" as const),
+        : v.lucro_bruto < 0
+          ? ("vermelha" as const)
+          : v.status === "a_receber"
+            ? ("amarela" as const)
+            : v.status === "devolvida_parcial"
+              ? ("amarela" as const)
+              : ("verde" as const),
     celulas: [
       v.cliente_nome ?? "Venda no balcão",
       formatarData(v.data_venda),
@@ -46,7 +50,13 @@ export default async function VendasGestaoPage() {
       `${v.custo_completo ? "" : "~"}${formatarBRL(v.custo_total)}`,
       `${v.custo_completo ? "" : "~"}${formatarBRL(v.lucro_bruto)}`,
       v.total > 0 ? `${((v.lucro_bruto / v.total) * 100).toFixed(1)}%` : "—",
-      v.status === "liquidado" ? "✓ liquidada" : "a receber",
+      v.status === "liquidado"
+        ? "✓ liquidada"
+        : v.status === "cancelada"
+          ? "⛔ cancelada"
+          : v.status === "devolvida_parcial"
+            ? "↩ devolvida em parte"
+            : "a receber",
     ],
   }));
 

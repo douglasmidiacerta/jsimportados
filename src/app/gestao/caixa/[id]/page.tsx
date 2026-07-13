@@ -69,6 +69,17 @@ export default async function CaixaDetalhePage({
                   {formatarBRL(Math.abs(dif))}
                 </span>
               </div>
+              {dif !== 0 && sessao.observacoes_fechamento && (
+                <p className="rounded-lg border border-[var(--amber)]/30 bg-[var(--amber)]/10 px-3 py-2 text-sm text-ink mt-1">
+                  <span className="font-semibold">Justificativa:</span>{" "}
+                  {sessao.observacoes_fechamento}
+                </p>
+              )}
+              {dif === 0 && sessao.observacoes_fechamento && (
+                <p className="text-xs text-muted mt-1">
+                  Obs. do fechamento: {sessao.observacoes_fechamento}
+                </p>
+              )}
             </>
           )}
         </div>

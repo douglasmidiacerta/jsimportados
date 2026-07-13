@@ -18,6 +18,7 @@ export type Produto = {
   qtde_min_atacado: number | null; // Produto 2.0: referência p/ atacado
   custo: number | null; // custo MÉDIO ponderado (só-gestão)
   custo_ultima_compra: number | null; // Produto 2.0: custo da última compra (só-gestão)
+  vender_sem_estoque: boolean; // Onda 1: false = trava a venda além do saldo
   estoque_atual: number;
   marca: string | null; // Produto 2.0
   modelo: string | null; // Produto 2.0
@@ -170,6 +171,7 @@ export type Compra = {
   total_despesas_brl: number;
   total_geral_brl: number;
   criado_em: string;
+  status: "confirmada" | "cancelada"; // Onda 1
 };
 
 export type CompraItem = {
@@ -293,7 +295,7 @@ export type Venda = {
   cartao_modalidade: "debito" | "credito" | null;
   cartao_parcelas: number | null;
   fiado_vencimento: string | null;
-  status: "liquidado" | "a_receber";
+  status: "liquidado" | "a_receber" | "cancelada" | "devolvida_parcial";
   observacoes: string | null;
   criado_em: string;
 };

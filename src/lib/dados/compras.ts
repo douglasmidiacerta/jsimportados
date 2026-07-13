@@ -27,7 +27,7 @@ export async function listarCompras(): Promise<CompraLista[]> {
   const { data, error } = await supabase
     .from("compras")
     .select(
-      "id, fornecedor_id, moeda, cambio, data_compra, observacoes, total_itens_brl, total_despesas_brl, total_geral_brl, criado_em, fornecedores(nome)",
+      "id, fornecedor_id, moeda, cambio, data_compra, observacoes, status, total_itens_brl, total_despesas_brl, total_geral_brl, criado_em, fornecedores(nome)",
     )
     .order("data_compra", { ascending: false })
     .order("criado_em", { ascending: false });
@@ -48,6 +48,7 @@ export async function listarCompras(): Promise<CompraLista[]> {
       total_despesas_brl: n(row.total_despesas_brl),
       total_geral_brl: n(row.total_geral_brl),
       criado_em: String(row.criado_em),
+      status: (row.status as "confirmada" | "cancelada") ?? "confirmada",
       fornecedor_nome: row.fornecedores?.nome ?? null,
     };
   });
@@ -104,6 +105,7 @@ export async function obterCompra(id: string): Promise<CompraDetalhe | null> {
     total_despesas_brl: n(row.total_despesas_brl),
     total_geral_brl: n(row.total_geral_brl),
     criado_em: String(row.criado_em),
+    status: (row.status as "confirmada" | "cancelada") ?? "confirmada",
     itens,
     despesas,
   };

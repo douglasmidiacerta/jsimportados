@@ -148,6 +148,13 @@ export function FormularioProduto({
             opcoes={UNIDADES}
           />
 
+          <Interruptor
+            name="vender_sem_estoque"
+            titulo="Vender mesmo sem estoque?"
+            descricao="Ligado: a venda passa e o saldo fica negativo (vermelho). Desligado: o sistema trava a venda além do saldo."
+            defaultLigado={produto?.vender_sem_estoque ?? true}
+          />
+
           {produto && (
             <div className="rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm">
               <Linha rotulo="Custo última compra" valor={produto.custo_ultima_compra} />
