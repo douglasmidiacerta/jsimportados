@@ -61,8 +61,8 @@
 | /gestao/maquininhas (+nova, [id]) | maquininhas + taxas MDR próprias | ✔ ONDA 2 (0015) |
 | /gestao/transferencias | transferência entre contas (2 lançamentos) | ✔ ONDA 2 (0015) |
 | /gestao/caixa/[id] · conferência 3 pontas | dinheiro × Pix × cartão por maquininha | ✔ ONDA 2 (0015) |
-| /gestao/conciliacao | conciliação bancária (OFX/CSV) | ⏳ ONDA 2 (0016) |
-| /gestao/fluxo-caixa | fluxo por período e conta (modelo MarketUp) | ⏳ ONDA 2 (0016) |
+| /gestao/conciliacao | importar OFX/CSV + casar linhas com lançamentos | ✔ ONDA 2 (0016) |
+| /gestao/fluxo-caixa | fluxo por período e conta (modelo MarketUp) | ✔ ONDA 2 (0016) |
 
 ## Gestão — Relatórios
 | Rota | Função | Status |
