@@ -22,6 +22,10 @@ function traduzErro(error: { message?: string } | null): string {
     return "Configure as taxas do cartão (Gestão → Taxas do cartão) antes de vender no cartão.";
   if (/fiado exige um cliente/.test(msg))
     return "Escolha um cliente para a venda fiado.";
+  if (/bloqueado para fiado/.test(msg))
+    return "Esse cliente está bloqueado para fiado. Cobre em dinheiro, Pix ou cartão.";
+  if (/passa do limite/.test(msg))
+    return "Esse cliente passou do limite de fiado. Receba parte do que ele deve ou cobre de outra forma.";
   if (/existe mais|não existe/.test(msg))
     return "Algum produto do carrinho não existe mais. Refaça a venda.";
   if (/permiss/.test(msg))

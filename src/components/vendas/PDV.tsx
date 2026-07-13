@@ -202,11 +202,20 @@ export function PDV({
   // cartão exige maquininha quando houver alguma cadastrada (espelha a trava do banco)
   const maquininhaOk =
     forma !== "cartao" || maquininhas.length === 0 || maquininhaId !== "";
+  // fiado: cliente não pode estar bloqueado nem estourar o limite (espelha a trava do banco)
+  const clienteSel = clientes.find((c) => c.id === clienteId);
+  const fiadoBloqueado = forma === "fiado" && clienteSel?.situacao === "bloqueado";
+  const fiadoEstoura =
+    forma === "fiado" &&
+    clienteSel?.limite_credito != null &&
+    (clienteSel.saldo_devedor ?? 0) + total > clienteSel.limite_credito;
+  const fiadoOk = !fiadoBloqueado && !fiadoEstoura;
   const podeFinalizar =
     carrinho.length > 0 &&
     todasQtdValidas &&
     forma !== null &&
     maquininhaOk &&
+    fiadoOk &&
     (forma !== "fiado" || clienteId !== "");
 
   // ---------- PASSO MONTAR ----------
@@ -431,6 +440,22 @@ export function PDV({
           ⚠️ Algum item vai deixar o estoque negativo. A venda é registrada mesmo assim — ajuste o estoque depois.
         </p>
       )}
+      {fiadoBloqueado && (
+        <p className="text-sm text-danger font-medium bg-[var(--danger)]/10 border border-[var(--danger)]/30 rounded-lg px-3 py-2">
+          🚫 {clienteSel?.nome} está bloqueado para fiado. Cobre em dinheiro, Pix ou cartão.
+        </p>
+      )}
+      {fiadoEstoura && (
+        <p className="text-sm text-danger font-medium bg-[var(--danger)]/10 border border-[var(--danger)]/30 rounded-lg px-3 py-2">
+          🚫 Passa do limite de fiado de {clienteSel?.nome}. Já deve {formatarBRL(clienteSel?.saldo_devedor ?? 0)} de {formatarBRL(clienteSel?.limite_credito ?? 0)}.
+        </p>
+      )}
+      {forma === "fiado" && clienteSel && !fiadoBloqueado && !fiadoEstoura && (clienteSel.saldo_devedor ?? 0) > 0 && (
+        <p className="text-xs text-muted">
+          {clienteSel.nome} já deve {formatarBRL(clienteSel.saldo_devedor ?? 0)} em fiado
+          {clienteSel.limite_credito != null ? ` (limite ${formatarBRL(clienteSel.limite_credito)})` : ""}.
+        </p>
+      )}
       {estado.erro && (
         <p className="text-sm text-danger font-medium bg-[var(--danger)]/10 border border-[var(--danger)]/30 rounded-lg px-3 py-2">
           {estado.erro}
@@ -456,7 +481,11 @@ export function PDV({
                     ? "Escolha a forma de pagamento."
                     : !maquininhaOk
                       ? "Escolha a maquininha que passou o cartão."
-                      : "Escolha o cliente (venda fiado)."}
+                      : fiadoBloqueado
+                        ? "Cliente bloqueado para fiado."
+                        : fiadoEstoura
+                          ? "Fiado passa do limite do cliente."
+                          : "Escolha o cliente (venda fiado)."}
             </p>
           )}
         </div>
