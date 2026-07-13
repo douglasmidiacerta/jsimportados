@@ -35,7 +35,9 @@ function lerTaxas(fd: FormData) {
         prazo_dias: Math.max(0, Math.floor(Number(t.prazo_dias) || 0)),
         ativo: true,
       }))
-      .filter((t) => t.percentual > 0 || t.prazo_dias > 0);
+      // só grava linhas com MDR de verdade — sem taxa, cai no fallback
+      // (taxas_cartao). O prazo tem valor padrão, então não serve de filtro.
+      .filter((t) => t.percentual > 0);
   } catch {
     return [];
   }

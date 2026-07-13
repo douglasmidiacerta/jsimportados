@@ -57,9 +57,10 @@ export function FormularioMaquininha({
     setLinhas((arr) => arr.map((l, j) => (j === i ? { ...l, [campo]: v } : l)));
   }
 
-  // só envia as linhas preenchidas (o backend também filtra vazias)
+  // só envia linhas com MDR de verdade (o prazo tem valor padrão e não conta);
+  // as em branco caem no fallback (taxas_cartao). O backend refiltra.
   const payloadTaxas = linhas
-    .filter((l) => l.percentual.trim() !== "" || Number(l.prazo) > 0)
+    .filter((l) => parseMoedaBR(l.percentual) > 0)
     .map((l) => ({
       modalidade: l.modalidade,
       parcelas: l.parcelas,
