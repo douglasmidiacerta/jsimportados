@@ -103,9 +103,15 @@ end $$;
 alter table public.caixa_sessoes
   add column if not exists justificativa_diferenca text;
 
+-- FIX de fuso (bug pré-existente da Fase 4): data_venda usava current_date
+-- (UTC) — venda após ~21h BRT ganhava a data de AMANHÃ, furando a regra
+-- "operação só devolve venda de hoje" e os relatórios diários.
+alter table public.vendas alter column data_venda set default public.hoje_brt();
+
 -- Espelho negativo: venda_itens passa a aceitar quantidade NEGATIVA (linha de
 -- devolução), nunca zero. devolucao_id marca a linha como espelho.
 alter table public.venda_itens drop constraint if exists venda_itens_qtd_pos;
+alter table public.venda_itens drop constraint if exists venda_itens_qtd_nz;
 alter table public.venda_itens add constraint venda_itens_qtd_nz
   check (quantidade <> 0);
 
