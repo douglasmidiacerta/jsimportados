@@ -29,7 +29,7 @@ const MENU: Item[] = [
   { nome: "Orçamentos", href: "/gestao/orcamentos", icone: ic("M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z|M14 2v6h6|M9 13h6|M9 17h4") },
   { nome: "Contas a receber", href: "/gestao/contas-receber", icone: ic("M12 1v22|M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6") },
   { nome: "Caixa", href: "/gestao/caixa", icone: ic("M2 7h20v12H2z|M2 7l3-4h14l3 4|M16 13h2") },
-  { nome: "Financeiro", href: "/gestao/financeiro", extras: ["/gestao/fluxo-caixa", "/gestao/conciliacao", "/gestao/transferencias"], icone: ic("M3 3v18h18|M7 14l4-4 3 3 5-6") },
+  { nome: "Financeiro", href: "/gestao/financeiro", extras: ["/gestao/fluxo-caixa", "/gestao/conciliacao", "/gestao/transferencias", "/gestao/resultado", "/gestao/plano-contas"], icone: ic("M3 3v18h18|M7 14l4-4 3 3 5-6") },
   { nome: "CRM & Preços", href: "/gestao/crm", icone: ic("M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2|M9 7a4 4 0 1 1 0 .01|M22 21v-2a4 4 0 0 0-3-3.87") },
   { nome: "Relatórios", href: "/gestao/relatorios", icone: ic("M4 4v16h16|M8 16V10|M12 16V6|M16 16v-4") },
   { nome: "Usuários", href: "/gestao/usuarios", icone: ic("M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2|M9 7a4 4 0 1 1 0 .01|M19 8v6|M22 11h-6") },

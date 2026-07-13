@@ -500,6 +500,19 @@ export type FormaFinanceira =
 
 export type DespesaCategoria = { id: string; nome: string; ativo: boolean };
 
+/** Resultado geral consolidado de um período (Leva G). */
+export type ResultadoGeral = {
+  receita: number;
+  cmv: number;
+  cmv_completo: boolean;
+  lucro_bruto: number;
+  taxas_cartao: number;
+  juros_fiado: number;
+  despesas: { categoria: string; total: number }[];
+  despesas_total: number;
+  resultado: number;
+};
+
 export type ContaPagar = {
   id: string;
   tipo: TipoContaPagar;
