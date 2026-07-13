@@ -13,8 +13,10 @@ import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
 const AREAS = [
   { nome: "Contas a pagar", desc: "Compras e despesas, com baixa e estorno", href: "/gestao/contas-pagar" },
   { nome: "Contas a receber", desc: "Cartão e fiado — dar baixa quando cair", href: "/gestao/contas-receber" },
-  { nome: "Extrato", desc: "Fluxo de caixa: o que entrou e saiu", href: "/gestao/extrato" },
+  { nome: "Fluxo de caixa", desc: "Entradas e saídas por conta, no período", href: "/gestao/fluxo-caixa" },
+  { nome: "Extrato", desc: "O que entrou e saiu (regime de caixa)", href: "/gestao/extrato" },
   { nome: "DRE gerencial", desc: "Resultado por mês (receita, CMV, despesas)", href: "/gestao/dre" },
+  { nome: "Contas & conciliação", desc: "Bancos, maquininhas e conciliar extrato", href: "/gestao/contas" },
 ];
 
 export default async function FinanceiroPage() {

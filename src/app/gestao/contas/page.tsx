@@ -43,6 +43,12 @@ export default async function ContasPage() {
           >
             Transferir entre contas
           </Link>
+          <Link
+            href="/gestao/conciliacao"
+            className="h-11 inline-flex items-center rounded-xl border border-line px-4 font-semibold text-ink hover:bg-surface-2 transition-colors"
+          >
+            Conciliar extrato
+          </Link>
         </div>
 
         {contas.length === 0 ? (
