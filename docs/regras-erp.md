@@ -82,6 +82,17 @@ extrato (regime caixa) + DRE (competência). Cada elo guarda `criado_por` +
 - **F2**: divergência de caixa exige justificativa + relatório de divergências.
 - **F3**: desconto da operação SEM teto (mantém livre).
 - **F10**: vender sem estoque vira interruptor POR PRODUTO (padrão MarketUp).
+- **CONCILIAÇÃO EM 3 PONTAS (dono, 12/07/2026):** venda NUNCA sem caixa aberto;
+  a sessão de caixa concilia TRÊS meios, cada um contra sua fonte:
+  1. **Cédulas** → contagem física da gaveta (já existe: contagem às cegas);
+  2. **Pix** → o recebido via Pix na sessão tem que bater com o extrato/saldo da
+     **conta bancária** que recebe os Pix;
+  3. **Cartão** → o passado na(s) **maquininha(s)** tem que condizer com o saldo
+     a receber/recebido da **adquirente** (por maquininha: bruto → taxa → líquido
+     → data que caiu).
+  Implementação: a trava "toda venda exige caixa" entra na 0014 (Onda 1); as
+  pontas 2 e 3 exigem cadastro de contas bancárias e maquininhas → Onda 2, com
+  tela de fechamento/conferência em 3 colunas (dinheiro · Pix · cartão).
 
 > Este arquivo é o contrato de regras. Toda leva/onda que criar trava nova
 > ATUALIZA este documento (com o nº da migration que a implementou).
