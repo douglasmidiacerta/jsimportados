@@ -3,6 +3,32 @@
 > Leva/Onda vai criar (⏳ com a etiqueta da leva). Atualizar este arquivo sempre
 > que criar/renomear rota. (12/07/2026)
 
+## ⚑ Navegação da Gestão (14/07/2026 — menu enxuto)
+
+A **fonte única do menu** é `src/lib/navegacao.ts`. O menu lateral
+(`SidebarGestao`, desktop) e o menu do celular (`MenuMobile`, hambúrguer na
+`BarraTopo`) consomem dela — **não duplicar a lista em outro lugar.**
+
+**9 itens, agrupados por frequência de uso:**
+
+| Grupo | Itens |
+|---|---|
+| — | Painel |
+| Dia a dia | Vendas *(aba: Orçamentos)* · Caixa |
+| Mercadoria | Compras · Estoque |
+| Dinheiro & análise | Financeiro · Relatórios |
+| *(separador — zona de setup)* | Cadastros · Ajustes |
+
+**A regra que separa os hubs** (siga ao criar tela nova):
+> **Cadastros** = o que se cria uma vez · **Financeiro** = operar o dinheiro ·
+> **Relatórios** = analisar · **Ajustes** = configurar o sistema
+
+- `/gestao/orcamentos` continua viva, mas fora do menu (é aba de Vendas).
+- `/gestao/crm` foi dissolvida → **redireciona** para `/gestao/clientes`.
+- `/gestao/ajustes` (novo) reúne Usuários, Configurações e Backup.
+- **O painel NÃO é menu.** É dashboard (KPIs, alertas, atalhos, últimas vendas,
+  a receber vencendo). Não recolocar grade de módulos lá.
+
 ## Públicas
 | Rota | Função | Status |
 |---|---|---|
