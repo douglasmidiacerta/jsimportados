@@ -440,10 +440,15 @@ export type CaixaResumo = CaixaSessao & {
 };
 
 /**
- * Subconjunto seguro para o painel da OPERAÇÃO (balcão). NÃO inclui
- * esperado_dinheiro_atual / esperado_dinheiro: entregar o total esperado ao
- * cliente da operação furaria a contagem às cegas do fechamento. O painel
- * mostra só os componentes (abertura, vendas, colocado, tirado).
+ * Subconjunto da sessão para o painel do caixa (abertura, vendas, colocado,
+ * tirado). Não carrega os campos de fechamento nem o esperado — o esperado vai
+ * como prop separada (`esperado`) do PainelCaixa.
+ *
+ * ⚠️ HISTÓRICO: este tipo nasceu para ESCONDER o esperado da operação e
+ * proteger a contagem às cegas. Em 14/07/2026 o dono decidiu MOSTRAR o esperado
+ * também no balcão (quer ver a diferença caindo até zero enquanto digita), o
+ * que encerrou a contagem às cegas — decisão consciente dele. As travas do
+ * banco continuam: abrir ou fechar com diferença exige justificativa.
  */
 export type CaixaPainel = Pick<
   CaixaResumo,

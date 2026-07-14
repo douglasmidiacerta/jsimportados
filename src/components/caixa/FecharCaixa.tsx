@@ -11,9 +11,18 @@ type Acao = (prev: EstadoFechar, fd: FormData) => Promise<EstadoFechar>;
 export function FecharCaixa({
   action,
   onCancelar,
+  esperado,
 }: {
   action: Acao;
   onCancelar: () => void;
+  /**
+   * Quanto deveria ter na gaveta. Vira o ALVO do campo: a linha de baixo mostra
+   * quanto falta, até zerar.
+   *
+   * ⚠️ Por decisão do dono isto vai também para o BALCÃO — o que ENCERRA a
+   * contagem às cegas. Ver o comentário em CampoDinheiro.
+   */
+  esperado: number;
 }) {
   const [estado, formAction, enviando] = useActionState<EstadoFechar, FormData>(
     action,
@@ -82,6 +91,8 @@ export function FecharCaixa({
         onChange={setValor}
         label="Dinheiro contado na gaveta"
         autoFocus
+        alvo={esperado}
+        alvoRotulo="Deveria ter na gaveta"
       />
 
       <label className="flex flex-col gap-1.5">

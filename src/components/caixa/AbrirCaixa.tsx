@@ -7,7 +7,20 @@ import type { EstadoAbrir } from "@/lib/dados/tipos";
 
 type Acao = (prev: EstadoAbrir, fd: FormData) => Promise<EstadoAbrir>;
 
-export function AbrirCaixa({ action }: { action: Acao }) {
+export function AbrirCaixa({
+  action,
+  fechamentoAnterior,
+}: {
+  action: Acao;
+  /**
+   * Quanto sobrou na gaveta no último fechamento (null na 1ª vez). Vira o ALVO
+   * do campo: a linha de baixo mostra quanto falta, até zerar.
+   *
+   * ⚠️ Por decisão do dono isto vai também para o BALCÃO — o que encerra a
+   * contagem às cegas na abertura. Ver o comentário em CampoDinheiro.
+   */
+  fechamentoAnterior: number | null;
+}) {
   const [estado, formAction, enviando] = useActionState<EstadoAbrir, FormData>(
     action,
     {},
@@ -123,6 +136,8 @@ export function AbrirCaixa({ action }: { action: Acao }) {
         onChange={setValor}
         label="Dinheiro na gaveta"
         autoFocus
+        alvo={fechamentoAnterior}
+        alvoRotulo="Sobrou no último fechamento"
       />
 
       {estado.erro && (

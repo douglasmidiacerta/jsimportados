@@ -27,17 +27,23 @@ export function PainelCaixa({
   suprimentoAction,
   fecharAction,
   esperado,
+  mostrarCard,
 }: {
   caixa: CaixaPainel;
   sangriaAction: Acao;
   suprimentoAction: Acao;
   fecharAction: AcaoFechar;
   /**
-   * Quanto DEVERIA ter na gaveta agora. Só a GESTÃO passa isto — o balcão
-   * NUNCA, senão a operadora vê o número e digita ele no fechamento, e a
-   * contagem às cegas vira enfeite (a diferença daria zero pra sempre).
+   * Quanto DEVERIA ter na gaveta agora.
+   *
+   * ⚠️ Passou a ir também para o BALCÃO por decisão do dono (14/07/2026): ele
+   * quer ver a diferença caindo até zero enquanto digita. Isso ENCERRA a
+   * contagem às cegas — ver o comentário em CampoDinheiro. As travas do banco
+   * (abrir/fechar com diferença exige justificativa) continuam valendo.
    */
-  esperado?: number;
+  esperado: number;
+  /** Mostra o card grande "deveria ter na gaveta" (só a gestão usa). */
+  mostrarCard?: boolean;
 }) {
   const [view, setView] = useState<"painel" | "sangria" | "suprimento" | "fechar">(
     "painel",
@@ -60,7 +66,13 @@ export function PainelCaixa({
       />
     );
   if (view === "fechar")
-    return <FecharCaixa action={fecharAction} onCancelar={() => setView("painel")} />;
+    return (
+      <FecharCaixa
+        action={fecharAction}
+        esperado={esperado}
+        onCancelar={() => setView("painel")}
+      />
+    );
 
   return (
     <div className="flex flex-col gap-5">
@@ -71,7 +83,7 @@ export function PainelCaixa({
         </div>
       </div>
 
-      {esperado !== undefined && (
+      {mostrarCard && (
         <div className="rounded-2xl border border-accent/40 bg-accent-soft/50 p-4 text-center">
           <div className="text-xs text-accent-ink font-semibold uppercase tracking-wide">
             Deveria ter na gaveta agora

@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { exigirGestao } from "@/lib/perfil";
-import { listarSessoesCaixa, obterCaixaAberto } from "@/lib/dados/caixa";
+import {
+  listarSessoesCaixa,
+  obterCaixaAberto,
+  ultimoFechamento,
+} from "@/lib/dados/caixa";
 import { formatarBRL, formatarData } from "@/lib/formato";
 import { BarraTopo } from "@/components/BarraTopo";
 import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
@@ -19,6 +23,8 @@ export default async function CaixaGestaoPage() {
     obterCaixaAberto(),
     listarSessoesCaixa(),
   ]);
+  // fechamento anterior só importa na tela de abrir
+  const anterior = caixa ? null : await ultimoFechamento();
 
   return (
     <>
@@ -37,12 +43,13 @@ export default async function CaixaGestaoPage() {
               <PainelCaixa
                 caixa={caixa}
                 esperado={caixa.esperado_dinheiro_atual}
+                mostrarCard
                 sangriaAction={sangriaAction}
                 suprimentoAction={suprimentoAction}
                 fecharAction={fecharCaixaAction}
               />
             ) : (
-              <AbrirCaixa action={abrirCaixaAction} />
+              <AbrirCaixa action={abrirCaixaAction} fechamentoAnterior={anterior} />
             )}
           </div>
         </section>
