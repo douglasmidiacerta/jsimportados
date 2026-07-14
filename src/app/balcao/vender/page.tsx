@@ -68,13 +68,26 @@ export default async function VenderPage() {
         </h1>
 
         {produtos.length === 0 ? (
+          // A saída depende de QUEM está logado: a gestão vai para a ficha
+          // completa (/gestao/produtos/novo — marca, código de barras, estoque
+          // mínimo, margens…); a operação vai para o cadastro rápido, que é o
+          // único que ela tem permissão de usar (/gestao/* exige gestão e a
+          // barraria na porta, deixando-a travada sem vender nem cadastrar).
           <VazioComSaida
             icone={
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 7 12 3 4 7v10l8 4 8-4Z" /><path d="M4 7l8 4 8-4" /><path d="M12 21V11" /></svg>
             }
             titulo="Nenhum produto ainda"
-            descricao="Para vender, primeiro é preciso ter produto cadastrado. Você mesma pode cadastrar um rapidinho."
-            acaoHref="/balcao/estoque/novo"
+            descricao={
+              perfil.papel === "gestao"
+                ? "Para vender, primeiro é preciso ter produto cadastrado. Vamos para a ficha completa do produto."
+                : "Para vender, primeiro é preciso ter produto cadastrado. Você mesma pode cadastrar um rapidinho."
+            }
+            acaoHref={
+              perfil.papel === "gestao"
+                ? "/gestao/produtos/novo"
+                : "/balcao/estoque/novo"
+            }
             acaoTexto="Cadastrar produto"
           />
         ) : (
