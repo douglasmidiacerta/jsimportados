@@ -24,7 +24,10 @@ export function ConverterOrcamento({
   const [forma, setForma] = useState<Forma | null>(null);
   const [modalidade, setModalidade] = useState<"debito" | "credito">("credito");
   const [parcelas, setParcelas] = useState(1);
-  const [maquininhaId, setMaquininhaId] = useState("");
+  // Só uma maquininha? Já vem escolhida — não faz sentido obrigar a tocar nela.
+  const [maquininhaId, setMaquininhaId] = useState(
+    maquininhas.length === 1 ? maquininhas[0].id : "",
+  );
 
   const maqOk = forma !== "cartao" || maquininhas.length === 0 || maquininhaId !== "";
   const fiadoOk = forma !== "fiado" || temCliente;

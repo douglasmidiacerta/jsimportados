@@ -63,7 +63,10 @@ export function PDV({
   const [modalidade, setModalidade] = useState<"debito" | "credito">("credito");
   const [parcelas, setParcelas] = useState(1);
   const [juros, setJuros] = useState("");
-  const [maquininhaId, setMaquininhaId] = useState("");
+  // Só uma maquininha? Já vem escolhida — a operadora não precisa tocar nela.
+  const [maquininhaId, setMaquininhaId] = useState(
+    maquininhas.length === 1 ? maquininhas[0].id : "",
+  );
 
   const listaAtual = listas.find((l) => l.id === listaAtualId);
   const temOutrasListas = listas.length > 1;
