@@ -6,6 +6,7 @@ import { listarListasPreco, obterListaDefault } from "@/lib/dados/listasPreco";
 import { obterCaixaAberto } from "@/lib/dados/caixa";
 import { listarMaquininhasAtivas } from "@/lib/dados/maquininhas";
 import { BarraTopo } from "@/components/BarraTopo";
+import { VazioComSaida } from "@/components/VazioComSaida";
 import { PDV } from "@/components/vendas/PDV";
 import { registrarVendaAction } from "./actions";
 
@@ -67,9 +68,15 @@ export default async function VenderPage() {
         </h1>
 
         {produtos.length === 0 ? (
-          <p className="text-muted">
-            Nenhum produto cadastrado ainda. Cadastre produtos antes de vender.
-          </p>
+          <VazioComSaida
+            icone={
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 7 12 3 4 7v10l8 4 8-4Z" /><path d="M4 7l8 4 8-4" /><path d="M12 21V11" /></svg>
+            }
+            titulo="Nenhum produto ainda"
+            descricao="Para vender, primeiro é preciso ter produto cadastrado. Você mesma pode cadastrar um rapidinho."
+            acaoHref="/balcao/estoque/novo"
+            acaoTexto="Cadastrar produto"
+          />
         ) : (
           <PDV
             produtos={produtos}

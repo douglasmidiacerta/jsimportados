@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { exigirPerfil } from "@/lib/perfil";
+import { exigirGestao } from "@/lib/perfil";
 import {
   abrirCaixa,
   movimentarCaixa,
@@ -13,32 +13,26 @@ import { traduzErroCaixa } from "@/lib/caixa/erros";
 import { parseMoedaBR } from "@/lib/formato";
 import type { EstadoForm, EstadoFechar, EstadoAbrir } from "@/lib/dados/tipos";
 
+/**
+ * Mesmo caixa do balcão, operado pela gestão. Antes /gestao/caixa só mostrava
+ * histórico e mandava "o balcão abre o caixa" — mas o dono também precisa
+ * abrir/fechar (ele que fica na loja em muitos dias).
+ */
+
 function revalidar() {
-  revalidatePath("/balcao/caixa");
   revalidatePath("/gestao/caixa");
+  revalidatePath("/balcao/caixa");
 }
 
-/**
- * Abre o caixa CONFERINDO com o último fechamento.
- *
- * Fluxo (mesma filosofia da contagem às cegas do fechamento):
- * 1. A pessoa CONTA a gaveta e manda o valor — sem ver nada antes.
- * 2. Aqui a gente compara com o que sobrou no último fechamento.
- * 3. Se não bate e ela ainda não explicou, NÃO abre: devolve a conferência
- *    para a tela revelar a diferença e pedir a justificativa.
- * 4. Com a justificativa, abre (o banco também exige — trava na 0022).
- *
- * De propósito NÃO pré-preenchemos o campo com o fechamento anterior: os dois
- * números ficariam sempre iguais e a divergência da noite viraria invisível.
- */
 export async function abrirCaixaAction(
   _prev: EstadoAbrir,
   fd: FormData,
 ): Promise<EstadoAbrir> {
-  await exigirPerfil();
+  await exigirGestao();
   const valor = parseMoedaBR(String(fd.get("valor") ?? ""));
   const obs = String(fd.get("observacoes") ?? "").trim() || null;
 
+  // confere com o que sobrou no último fechamento (ver 0022)
   const anterior = await ultimoFechamento();
   if (anterior !== null && !obs) {
     const diferenca = Number((valor - anterior).toFixed(2));
@@ -53,14 +47,14 @@ export async function abrirCaixaAction(
   if (error) return { erro: traduzErroCaixa(error) };
 
   revalidar();
-  redirect("/balcao/caixa");
+  redirect("/gestao/caixa");
 }
 
 async function movimento(
   tipo: "sangria" | "suprimento",
   fd: FormData,
 ): Promise<EstadoForm> {
-  await exigirPerfil();
+  await exigirGestao();
   const valor = parseMoedaBR(String(fd.get("valor") ?? ""));
   const obs = String(fd.get("observacoes") ?? "").trim() || null;
   if (!(valor > 0)) return { erro: "Informe um valor maior que zero." };
@@ -69,7 +63,7 @@ async function movimento(
   if (error) return { erro: traduzErroCaixa(error) };
 
   revalidar();
-  redirect("/balcao/caixa");
+  redirect("/gestao/caixa");
 }
 
 export async function sangriaAction(_prev: EstadoForm, fd: FormData) {
@@ -83,18 +77,15 @@ export async function fecharCaixaAction(
   _prev: EstadoFechar,
   fd: FormData,
 ): Promise<EstadoFechar> {
-  await exigirPerfil();
+  await exigirGestao();
   const valor = parseMoedaBR(String(fd.get("valor") ?? ""));
   const obs = String(fd.get("observacoes") ?? "").trim() || null;
 
   const { resumo, error } = await fecharCaixa(valor, obs);
   if (error || !resumo) return { erro: traduzErroCaixa(error) };
 
-  // sem redirect NEM revalidar a rota atual: a revelação (esperado × contado ×
-  // diferença) é mostrada inline pelo PainelCaixa/FecharCaixa, que precisa
-  // continuar montado. Revalidar "/balcao/caixa" aqui remontaria a página como
-  // "Abrir caixa" (a sessão virou 'fechado') e a conferência sumiria antes de
-  // ser vista. Só marcamos a visão da gestão como desatualizada.
-  revalidatePath("/gestao/caixa");
+  // NÃO revalida a rota atual: a revelação (esperado × contado × diferença)
+  // é mostrada inline e sumiria se a página remontasse como "Abrir caixa".
+  revalidatePath("/balcao/caixa");
   return { resumo };
 }

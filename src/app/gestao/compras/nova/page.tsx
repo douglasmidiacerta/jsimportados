@@ -3,6 +3,7 @@ import { listarFornecedores } from "@/lib/dados/fornecedores";
 import { listarProdutos } from "@/lib/dados/produtos";
 import { BarraTopo } from "@/components/BarraTopo";
 import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
+import { VazioComSaida } from "@/components/VazioComSaida";
 import { FormularioCompra } from "@/components/compras/FormularioCompra";
 import { registrarCompraAction } from "../actions";
 
@@ -28,9 +29,15 @@ export default async function NovaCompraPage() {
           voltarHref="/gestao/compras"
         />
         {produtos.length === 0 ? (
-          <p className="text-muted">
-            Você precisa ter produtos cadastrados antes de registrar uma compra.
-          </p>
+          <VazioComSaida
+            icone={
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 7 12 3 4 7v10l8 4 8-4Z" /><path d="M4 7l8 4 8-4" /><path d="M12 21V11" /></svg>
+            }
+            titulo="Cadastre um produto primeiro"
+            descricao="A compra registra quanto você pagou por cada produto — então o produto precisa existir antes. Leva menos de um minuto."
+            acaoHref="/gestao/produtos/novo"
+            acaoTexto="Cadastrar produto"
+          />
         ) : (
           <FormularioCompra
             action={registrarCompraAction}

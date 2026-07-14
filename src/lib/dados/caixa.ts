@@ -116,6 +116,21 @@ export async function totaisAReceberDaSessao(
   return { cartao, fiado };
 }
 
+/**
+ * Quanto sobrou na gaveta no último fechamento (null se nunca fechou um caixa).
+ *
+ * ⚠️ SÓ pode ser chamada DENTRO da Server Action, depois que a pessoa já digitou
+ * a contagem dela. NUNCA no render da página de abertura: o valor iria ao
+ * cliente no payload do RSC e entregaria a resposta antes da pergunta —
+ * furando a contagem às cegas, igual ao esperado_dinheiro_atual.
+ */
+export async function ultimoFechamento(): Promise<number | null> {
+  const supabase = await criarClienteServidor();
+  const { data, error } = await supabase.rpc("ultimo_fechamento_caixa");
+  if (error || data == null) return null;
+  return Number(data);
+}
+
 /** Abre o caixa (via RPC). */
 export async function abrirCaixa(valor: number, obs: string | null) {
   const supabase = await criarClienteServidor();
