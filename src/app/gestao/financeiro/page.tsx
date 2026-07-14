@@ -10,15 +10,15 @@ import { formatarBRL } from "@/lib/formato";
 import { BarraTopo } from "@/components/BarraTopo";
 import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
 
+// Só OPERAÇÃO do dinheiro. Analisar é em Relatórios (DRE, resultado);
+// cadastrar banco/maquininha/categoria é em Cadastros.
 const AREAS = [
   { nome: "Contas a pagar", desc: "Compras e despesas, com baixa e estorno", href: "/gestao/contas-pagar" },
   { nome: "Contas a receber", desc: "Cartão e fiado — dar baixa quando cair", href: "/gestao/contas-receber" },
-  { nome: "Resultado geral", desc: "O que sobrou no período, despesas por categoria", href: "/gestao/resultado" },
-  { nome: "Plano de contas", desc: "Categorias de despesa do financeiro", href: "/gestao/plano-contas" },
+  { nome: "Transferir entre contas", desc: "Mover dinheiro de uma conta para outra", href: "/gestao/transferencias" },
+  { nome: "Conciliar extrato", desc: "Importar OFX/CSV do banco e casar com os lançamentos", href: "/gestao/conciliacao" },
   { nome: "Fluxo de caixa", desc: "Entradas e saídas por conta, no período", href: "/gestao/fluxo-caixa" },
   { nome: "Extrato", desc: "O que entrou e saiu (regime de caixa)", href: "/gestao/extrato" },
-  { nome: "DRE gerencial", desc: "Resultado por mês (receita, CMV, despesas)", href: "/gestao/dre" },
-  { nome: "Contas & conciliação", desc: "Bancos, maquininhas e conciliar extrato", href: "/gestao/contas" },
 ];
 
 export default async function FinanceiroPage() {
@@ -41,7 +41,7 @@ export default async function FinanceiroPage() {
       <main className="mx-auto max-w-3xl w-full px-4 py-6 sm:py-10 flex-1">
         <CabecalhoCadastro
           titulo="Financeiro"
-          descricao="Contas, fluxo de caixa e resultado do negócio."
+          descricao="Operar o dinheiro: pagar, receber, transferir e conciliar."
           voltarHref="/gestao"
         />
 
@@ -76,10 +76,10 @@ export default async function FinanceiroPage() {
         </div>
 
         <p className="text-xs text-muted mt-6">
-          Dica: o <b>Extrato</b> mostra o dinheiro que entrou e saiu de verdade (regime
-          de caixa). A <b>DRE</b> mostra o lucro por competência — o mês em que a venda ou
-          a despesa aconteceu, mesmo que o pagamento caia depois. São duas visões do mesmo
-          negócio; um valor nunca é contado duas vezes na mesma visão.
+          Aqui você <b>opera</b> o dinheiro. Para <b>analisar</b> (DRE, resultado do
+          período, lucratividade) vá em <Link href="/gestao/relatorios" className="text-accent-ink font-semibold underline decoration-dotted underline-offset-2">Relatórios</Link>.
+          Para <b>cadastrar</b> bancos, maquininhas ou categorias de despesa, vá em{" "}
+          <Link href="/gestao/cadastros" className="text-accent-ink font-semibold underline decoration-dotted underline-offset-2">Cadastros</Link>.
         </p>
       </main>
     </>

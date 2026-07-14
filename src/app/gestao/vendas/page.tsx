@@ -6,6 +6,7 @@ import { BarraTopo } from "@/components/BarraTopo";
 import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
 import { ListaCadastro, type ItemLista } from "@/components/cadastros/ListaCadastro";
 import { TabelaBusca, type LinhaBusca } from "@/components/TabelaBusca";
+import { AbasVendas } from "@/components/vendas/AbasVendas";
 
 function rotuloForma(v: string) {
   return FORMAS_PAGAMENTO.find((f) => f.valor === v)?.rotulo ?? v;
@@ -70,6 +71,7 @@ export default async function VendasGestaoPage() {
           descricao={`${vendas.length} venda(s) · Total ${formatarBRL(totalVendido)} · Lucro ${formatarBRL(lucroTotal)}`}
           voltarHref="/gestao"
         />
+        <AbasVendas atual="vendas" />
         <div className="lg:hidden">
           <ListaCadastro
             itens={itens}

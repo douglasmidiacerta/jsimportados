@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { sair } from "@/app/login/actions";
+import { MenuMobile } from "@/components/MenuMobile";
 import type { Papel } from "@/lib/perfil";
 
 export function BarraTopo({
@@ -20,7 +21,9 @@ export function BarraTopo({
       }`}
     >
       <div className="mx-auto max-w-5xl px-4 h-16 flex items-center justify-between gap-3">
-        <Link href="/" className="flex items-center gap-2.5">
+        {area === "gestao" && <MenuMobile />}
+
+        <Link href="/" className="flex items-center gap-2.5 mr-auto">
           <span className="w-9 h-9 rounded-lg bg-accent text-white grid place-items-center text-sm font-extrabold tracking-tight">
             JS
           </span>

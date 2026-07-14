@@ -6,6 +6,7 @@ import { BarraTopo } from "@/components/BarraTopo";
 import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
 import { TabelaBusca, type LinhaBusca } from "@/components/TabelaBusca";
 import { ListaCadastro, type ItemLista } from "@/components/cadastros/ListaCadastro";
+import { AbasVendas } from "@/components/vendas/AbasVendas";
 
 function hoje(): string {
   return new Date().toLocaleDateString("sv-SE", { timeZone: "America/Sao_Paulo" });
@@ -67,6 +68,8 @@ export default async function OrcamentosPage() {
           descricao="Propostas para o cliente. Um orçamento aberto vira venda com um clique."
           voltarHref="/gestao"
         />
+
+        <AbasVendas atual="orcamentos" />
 
         <div className="flex flex-wrap gap-2 mb-5">
           <Link href="/gestao/orcamentos/novo" className="h-11 inline-flex items-center gap-2 rounded-xl bg-accent text-white px-4 font-semibold shadow-[var(--shadow)] active:scale-[0.99]">
