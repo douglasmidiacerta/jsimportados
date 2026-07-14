@@ -486,6 +486,20 @@ export type FechamentoResumo = {
 /** Estado do formulário de fechamento (mostra o resumo revelado no sucesso). */
 export type EstadoFechar = { erro?: string; resumo?: FechamentoResumo };
 
+/**
+ * Revelação da ABERTURA: o que sobrou na gaveta no último fechamento × o que a
+ * pessoa contou agora. Só chega ao cliente DEPOIS que ela digitou a contagem —
+ * nunca antes, senão entregaríamos a resposta junto com a pergunta (mesma regra
+ * da contagem às cegas do fechamento).
+ */
+export type ConferenciaAbertura = {
+  fechamento_anterior: number;
+  contado: number;
+  diferenca: number; // contado − anterior. Negativo = faltou dinheiro na gaveta.
+};
+
+export type EstadoAbrir = { erro?: string; conferencia?: ConferenciaAbertura };
+
 // ========================== Fase 6: Financeiro ==========================
 
 export type TipoContaPagar = "compra" | "despesa";

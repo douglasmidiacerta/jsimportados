@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { exigirGestao } from "@/lib/perfil";
 import { listarVendasGestao } from "@/lib/dados/vendas";
 import { formatarBRL, formatarData, numVenda } from "@/lib/formato";
@@ -72,6 +73,16 @@ export default async function VendasGestaoPage() {
           voltarHref="/gestao"
         />
         <AbasVendas atual="vendas" />
+
+        <div className="flex flex-wrap gap-2 mb-5">
+          <Link
+            href="/balcao/vender"
+            className="h-11 inline-flex items-center gap-2 rounded-xl bg-accent text-white px-4 font-semibold shadow-[var(--shadow)] active:scale-[0.99]"
+          >
+            <span className="text-lg leading-none">+</span> Nova venda
+          </Link>
+        </div>
+
         <div className="lg:hidden">
           <ListaCadastro
             itens={itens}

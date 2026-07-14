@@ -26,11 +26,18 @@ export function PainelCaixa({
   sangriaAction,
   suprimentoAction,
   fecharAction,
+  esperado,
 }: {
   caixa: CaixaPainel;
   sangriaAction: Acao;
   suprimentoAction: Acao;
   fecharAction: AcaoFechar;
+  /**
+   * Quanto DEVERIA ter na gaveta agora. Só a GESTÃO passa isto — o balcão
+   * NUNCA, senão a operadora vê o número e digita ele no fechamento, e a
+   * contagem às cegas vira enfeite (a diferença daria zero pra sempre).
+   */
+  esperado?: number;
 }) {
   const [view, setView] = useState<"painel" | "sangria" | "suprimento" | "fechar">(
     "painel",
@@ -63,6 +70,20 @@ export function PainelCaixa({
           desde as {horaAbertura(caixa.aberto_em)} · abertura {formatarBRL(caixa.valor_abertura)}
         </div>
       </div>
+
+      {esperado !== undefined && (
+        <div className="rounded-2xl border border-accent/40 bg-accent-soft/50 p-4 text-center">
+          <div className="text-xs text-accent-ink font-semibold uppercase tracking-wide">
+            Deveria ter na gaveta agora
+          </div>
+          <div className="text-3xl font-extrabold text-accent-ink tabular-nums mt-1">
+            {formatarBRL(esperado)}
+          </div>
+          <div className="text-[11px] text-muted mt-1">
+            abertura + vendas em dinheiro + colocado − tirado
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-3">
         <Card titulo="Vendas em dinheiro" valor={formatarBRL(caixa.vendas_dinheiro)} destaque />

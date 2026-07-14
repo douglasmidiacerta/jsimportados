@@ -1,13 +1,24 @@
 import Link from "next/link";
 import { exigirGestao } from "@/lib/perfil";
-import { listarSessoesCaixa } from "@/lib/dados/caixa";
+import { listarSessoesCaixa, obterCaixaAberto } from "@/lib/dados/caixa";
 import { formatarBRL, formatarData } from "@/lib/formato";
 import { BarraTopo } from "@/components/BarraTopo";
 import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
+import { AbrirCaixa } from "@/components/caixa/AbrirCaixa";
+import { PainelCaixa } from "@/components/caixa/PainelCaixa";
+import {
+  abrirCaixaAction,
+  sangriaAction,
+  suprimentoAction,
+  fecharCaixaAction,
+} from "./actions";
 
 export default async function CaixaGestaoPage() {
   const perfil = await exigirGestao();
-  const sessoes = await listarSessoesCaixa();
+  const [caixa, sessoes] = await Promise.all([
+    obterCaixaAberto(),
+    listarSessoesCaixa(),
+  ]);
 
   return (
     <>
@@ -15,13 +26,34 @@ export default async function CaixaGestaoPage() {
       <main className="mx-auto max-w-3xl w-full px-4 py-6 sm:py-10 flex-1">
         <CabecalhoCadastro
           titulo="Caixa"
-          descricao="Histórico de aberturas e fechamentos, com as diferenças."
+          descricao="Abra, movimente e feche o caixa — e veja o histórico com as diferenças."
           voltarHref="/gestao"
         />
 
+        {/* Operar o caixa (a gestão VÊ o esperado; o balcão não — contagem às cegas) */}
+        <section className="mb-8">
+          <div className="mx-auto max-w-md">
+            {caixa ? (
+              <PainelCaixa
+                caixa={caixa}
+                esperado={caixa.esperado_dinheiro_atual}
+                sangriaAction={sangriaAction}
+                suprimentoAction={suprimentoAction}
+                fecharAction={fecharCaixaAction}
+              />
+            ) : (
+              <AbrirCaixa action={abrirCaixaAction} />
+            )}
+          </div>
+        </section>
+
+        {/* Histórico (intacto) */}
+        <h2 className="text-sm font-bold text-muted uppercase tracking-wide mb-3">
+          Histórico
+        </h2>
         {sessoes.length === 0 ? (
-          <p className="text-muted text-center py-10">
-            Nenhum caixa aberto ainda. O balcão abre o caixa no começo do dia.
+          <p className="text-muted text-center py-8">
+            Nenhum caixa ainda. Abra o primeiro aí em cima.
           </p>
         ) : (
           <ul className="flex flex-col gap-2">
