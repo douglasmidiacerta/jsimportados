@@ -3,50 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { sair } from "@/app/login/actions";
+import { MENU_GESTAO, itemAtivo } from "@/lib/navegacao";
 
-type Item = {
-  nome: string;
-  href: string;
-  exato?: boolean;
-  extras?: string[]; // rotas irmãs que também acendem este item
-  icone: React.ReactNode;
-};
-
-const ic = (d: string) => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    {d.split("|").map((p, i) => (
-      <path key={i} d={p} />
-    ))}
-  </svg>
-);
-
-const MENU: Item[] = [
-  { nome: "Painel", href: "/gestao", exato: true, icone: ic("M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z|M9 22V12h6v10") },
-  { nome: "Cadastros", href: "/gestao/cadastros", extras: ["/gestao/produtos", "/gestao/categorias", "/gestao/fornecedores", "/gestao/clientes", "/gestao/listas-preco", "/gestao/taxas-cartao", "/gestao/maquininhas", "/gestao/contas"], icone: ic("M20 7 12 3 4 7v10l8 4 8-4Z|M4 7l8 4 8-4|M12 21V11") },
-  { nome: "Compras", href: "/gestao/compras", icone: ic("M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z|M3 6h18|M16 10a4 4 0 0 1-8 0") },
-  { nome: "Estoque", href: "/gestao/estoque", icone: ic("M3 7h18v13H3z|M3 7l2-4h14l2 4|M9 12h6") },
-  { nome: "Vendas", href: "/gestao/vendas", icone: ic("M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z|M3 6h18|M16 10a4 4 0 0 1-8 0") },
-  { nome: "Orçamentos", href: "/gestao/orcamentos", icone: ic("M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z|M14 2v6h6|M9 13h6|M9 17h4") },
-  { nome: "Contas a receber", href: "/gestao/contas-receber", icone: ic("M12 1v22|M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6") },
-  { nome: "Caixa", href: "/gestao/caixa", icone: ic("M2 7h20v12H2z|M2 7l3-4h14l3 4|M16 13h2") },
-  { nome: "Financeiro", href: "/gestao/financeiro", extras: ["/gestao/fluxo-caixa", "/gestao/conciliacao", "/gestao/transferencias", "/gestao/resultado", "/gestao/plano-contas"], icone: ic("M3 3v18h18|M7 14l4-4 3 3 5-6") },
-  { nome: "CRM & Preços", href: "/gestao/crm", icone: ic("M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2|M9 7a4 4 0 1 1 0 .01|M22 21v-2a4 4 0 0 0-3-3.87") },
-  { nome: "Relatórios", href: "/gestao/relatorios", icone: ic("M4 4v16h16|M8 16V10|M12 16V6|M16 16v-4") },
-  { nome: "Usuários", href: "/gestao/usuarios", icone: ic("M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2|M9 7a4 4 0 1 1 0 .01|M19 8v6|M22 11h-6") },
-  { nome: "Configurações", href: "/gestao/configuracoes", extras: ["/gestao/backup"], icone: ic("M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z|M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z") },
-];
-
-/** Menu lateral fixo do Modo Gestão (só desktop; no mobile a BarraTopo assume). */
+/** Menu lateral fixo do Modo Gestão (só desktop; no mobile o MenuMobile assume). */
 export function SidebarGestao({ nome }: { nome: string }) {
   const pathname = usePathname();
   const primeiroNome = nome.trim().split(/\s+/)[0] || "você";
-
-  const casa = (base: string) =>
-    pathname === base || pathname.startsWith(base + "/");
-  const ativo = (item: Item) =>
-    item.exato
-      ? pathname === item.href
-      : casa(item.href) || (item.extras ?? []).some(casa);
 
   return (
     <aside className="nao-imprimir hidden lg:flex flex-col w-64 shrink-0 border-r border-line bg-surface sticky top-0 h-screen">
@@ -62,25 +24,45 @@ export function SidebarGestao({ nome }: { nome: string }) {
         </span>
       </div>
 
+      <div className="px-3 pt-3 shrink-0">
+        <Link
+          href="/balcao/vender"
+          className="flex items-center justify-center gap-2 h-11 rounded-xl bg-accent text-white font-bold shadow-[var(--shadow)] active:scale-[0.99] transition-transform"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" /><path d="M3 6h18" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>
+          Vender
+        </Link>
+      </div>
+
       <nav className="flex-1 overflow-y-auto p-3 flex flex-col gap-0.5">
-        {MENU.map((item) => {
-          const on = ativo(item);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={on ? "page" : undefined}
-              className={`flex items-center gap-3 rounded-xl px-3 h-11 text-sm font-semibold transition-colors ${
-                on
-                  ? "bg-accent-soft text-accent-ink"
-                  : "text-muted hover:text-ink hover:bg-surface-2"
-              }`}
-            >
-              <span className={on ? "text-accent-ink" : "text-muted"}>{item.icone}</span>
-              {item.nome}
-            </Link>
-          );
-        })}
+        {MENU_GESTAO.map((grupo, gi) => (
+          <div key={gi} className="flex flex-col gap-0.5">
+            {grupo.separar && <div className="border-t border-line my-2" />}
+            {grupo.titulo && (
+              <span className="px-3 pt-2 pb-1 text-[10px] font-mono font-bold uppercase tracking-widest text-muted">
+                {grupo.titulo}
+              </span>
+            )}
+            {grupo.itens.map((item) => {
+              const on = itemAtivo(item, pathname);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={on ? "page" : undefined}
+                  className={`flex items-center gap-3 rounded-xl px-3 h-11 text-sm font-semibold transition-colors ${
+                    on
+                      ? "bg-accent-soft text-accent-ink"
+                      : "text-muted hover:text-ink hover:bg-surface-2"
+                  }`}
+                >
+                  <span className={on ? "text-accent-ink" : "text-muted"}>{item.icone}</span>
+                  {item.nome}
+                </Link>
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
       <div className="border-t border-line p-3 flex flex-col gap-2 shrink-0">

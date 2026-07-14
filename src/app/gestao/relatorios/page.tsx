@@ -12,15 +12,34 @@ import { formatarBRL } from "@/lib/formato";
 import { BarraTopo } from "@/components/BarraTopo";
 import { CabecalhoCadastro } from "@/components/cadastros/CabecalhoCadastro";
 
-const GRUPOS = [
-  { nome: "Vendas por período", desc: "Faturamento, lucro, ticket, por dia e forma", href: "/gestao/relatorios/vendas" },
-  { nome: "Lucratividade + ABC de produtos", desc: "O que dá mais lucro e o que mais vende", href: "/gestao/relatorios/lucratividade" },
-  { nome: "ABC de clientes", desc: "Quem representa a maior parte das compras", href: "/gestao/relatorios/clientes" },
-  { nome: "ABC de estoque", desc: "Onde está o dinheiro parado", href: "/gestao/relatorios/estoque" },
-  { nome: "Patrimônio em estoque", desc: "Valor a custo e a preço de venda + CSV", href: "/gestao/relatorios/patrimonio" },
-  { nome: "Em aberto + caixa", desc: "A receber, a pagar e auditoria de caixa", href: "/gestao/relatorios/em-aberto" },
-  { nome: "DRE gerencial", desc: "Resultado por mês (competência)", href: "/gestao/dre" },
-  { nome: "Extrato / fluxo de caixa", desc: "O que entrou e saiu de verdade", href: "/gestao/extrato" },
+// Tudo que é ANÁLISE mora aqui — inclusive DRE e Resultado, que antes viviam
+// no Financeiro (que agora é só operação).
+const SECOES = [
+  {
+    titulo: "Vendas & lucro",
+    itens: [
+      { nome: "Vendas por período", desc: "Faturamento, lucro, ticket, por dia e forma", href: "/gestao/relatorios/vendas" },
+      { nome: "Lucratividade + ABC de produtos", desc: "O que dá mais lucro e o que mais vende", href: "/gestao/relatorios/lucratividade" },
+      { nome: "Resultado geral", desc: "O que sobrou no período, despesas por categoria", href: "/gestao/resultado" },
+      { nome: "DRE gerencial", desc: "Resultado por mês (competência)", href: "/gestao/dre" },
+    ],
+  },
+  {
+    titulo: "Estoque",
+    itens: [
+      { nome: "ABC de estoque", desc: "Onde está o dinheiro parado", href: "/gestao/relatorios/estoque" },
+      { nome: "Patrimônio em estoque", desc: "Valor a custo e a preço de venda + CSV", href: "/gestao/relatorios/patrimonio" },
+    ],
+  },
+  {
+    titulo: "Clientes & pendências",
+    itens: [
+      { nome: "ABC de clientes", desc: "Quem representa a maior parte das compras", href: "/gestao/relatorios/clientes" },
+      { nome: "Carteira de clientes", desc: "Quem mais compra, por total gasto", href: "/gestao/clientes/carteira" },
+      { nome: "Aniversariantes", desc: "Quem faz aniversário no mês", href: "/gestao/clientes/aniversariantes" },
+      { nome: "Em aberto + caixa", desc: "A receber, a pagar e auditoria de caixa", href: "/gestao/relatorios/em-aberto" },
+    ],
+  },
 ];
 
 export default async function RelatoriosPage() {
@@ -56,16 +75,25 @@ export default async function RelatoriosPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {GRUPOS.map((g) => (
-            <Link
-              key={g.href}
-              href={g.href}
-              className="rounded-2xl border border-accent/40 bg-surface p-5 shadow-[var(--shadow)] hover:border-accent transition-colors"
-            >
-              <h2 className="text-ink font-bold text-lg tracking-tight">{g.nome}</h2>
-              <p className="text-muted text-sm mt-1.5">{g.desc}</p>
-            </Link>
+        <div className="flex flex-col gap-6">
+          {SECOES.map((s) => (
+            <section key={s.titulo}>
+              <h2 className="text-[11px] font-mono font-bold uppercase tracking-widest text-muted mb-2.5">
+                {s.titulo}
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {s.itens.map((g) => (
+                  <Link
+                    key={g.href}
+                    href={g.href}
+                    className="rounded-2xl border border-accent/40 bg-surface p-5 shadow-[var(--shadow)] hover:border-accent transition-colors"
+                  >
+                    <h3 className="text-ink font-bold text-lg tracking-tight">{g.nome}</h3>
+                    <p className="text-muted text-sm mt-1.5">{g.desc}</p>
+                  </Link>
+                ))}
+              </div>
+            </section>
           ))}
         </div>
       </main>
