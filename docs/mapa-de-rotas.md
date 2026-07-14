@@ -20,6 +20,7 @@
 | /balcao/entrada | chegada de mercadoria | ✔ |
 | /balcao/estoque · /balcao/estoque/novo | vitrine + cadastro rápido | ✔ |
 | /balcao/caixa | abrir/movimentar/fechar (contagem às cegas) | ✔ |
+| /balcao/ajuda | guia rápido ilustrado da operadora (passo a passo) | ✔ ONDA 3 |
 | /balcao/devolver | devolução simples (venda do dia, da própria operadora) | ⏳ ONDA 1 |
 
 ## Gestão — Painel e Cadastros

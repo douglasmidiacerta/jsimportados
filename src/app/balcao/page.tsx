@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { exigirPerfil } from "@/lib/perfil";
 import { BarraTopo } from "@/components/BarraTopo";
 import { BotaoGigante } from "@/components/BotaoGigante";
@@ -72,6 +73,14 @@ export default async function BalcaoPage() {
             icone={ico.caixa}
           />
         </div>
+
+        <Link
+          href="/balcao/ajuda"
+          className="mt-4 sm:mt-5 flex items-center justify-center gap-2 w-full h-14 rounded-2xl border border-line bg-surface text-ink font-bold text-lg active:scale-[0.99] transition-transform"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><path d="M12 17h.01" /></svg>
+          Como usar
+        </Link>
       </main>
     </>
   );
